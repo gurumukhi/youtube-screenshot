@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "YouTube Screenshot",
+  "description": "Take screenshots from YouTube video",
+  "version": "1.0.0",
+  "icons": {
+    "96": "icons/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "js": [
+        "content_script.js"
+      ]
+    }
+  ],
+  "options_ui": {
+    "page": "options/index.html"
+  },
+  "permissions": [
+    "storage"
+  ]
+}
