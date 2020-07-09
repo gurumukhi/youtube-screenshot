@@ -13,7 +13,42 @@ captureScreenshot = function () {
   downloadFile(canvas);
 };
 
-downloadFile = function (canvas) {
+downloadFile = function (canvas, copyToClipboard) {
+  if (copyToClipboard) {
+    canvas.toBlob((blob) => {
+      console.log(blob);
+
+      console.log("writing now png");
+      navigator.clipboard
+        .write([new ClipboardItem({ "image/png": blob })])
+        .then(() => {
+          console.log("write done");
+          navigator.clipboard
+            .read()
+            .then((data) => console.log(data))
+            .catch((e) => console.warn(e));
+        })
+        .catch((e) => console.warn(e));
+
+      // console.log("checking permission");
+      // navigator.permissions
+      //   .query({ name: "clipboard-write" })
+      //   .then((result) => {
+      //     if (result.state == "granted" || result.state == "prompt") {
+      //       console.log("writing now");
+      //       navigator.clipboard
+      //         .write([new ClipboardItem({ "image/jpeg": blob })])
+      //         .then(() =>
+      //           navigator.clipboard.read().then((data) => console.log(data))
+      //         );
+      //     } else {
+      //       console.log("Clipboard permission issue");
+      //     }
+      //   })
+      //   .catch((e) => console.warn(e));
+    });
+    // return;
+  }
   var aClass = "youtube-screenshot-a";
   var a = document.createElement("a");
   a.href = canvas.toDataURL("image/jpeg");
@@ -21,9 +56,60 @@ downloadFile = function (canvas) {
   a.style.display = "none";
   a.classList.add(aClass);
   document.body.appendChild(a);
-  document.querySelector(`.${aClass}`).click();
+  if (copyToClipboard) {
+    console.log(a.href);
+    // navigator.clipboard
+    //   .write([new ClipboardItem({ "image/jpeg": a.href })])
+    //   .then(() => navigator.clipboard.read().then((data) => console.log(data)));
+
+    var img = document.createElement("img");
+    img.src = a.href;
+
+    var div = document.createElement("div");
+    div.contentEditable = true;
+    div.appendChild(img);
+    document.body.appendChild(div);
+
+    SelectText(div);
+
+    //Execute copy Command
+    //Note: This will ONLY work directly inside a click listenner
+    console.log("selected");
+    document.execCommand("copy");
+    console.log("copied");
+  } else {
+    document.querySelector(`.${aClass}`).click();
+  }
   document.body.removeChild(a);
 };
+
+//Cross-browser function to select content
+function SelectText(element) {
+  console.log("selecting");
+  var doc = document;
+  if (doc.body.createTextRange) {
+    console.log("1");
+    var range = document.body.createTextRange();
+    range.moveToElementText(element);
+    range.select();
+  } else if (window.getSelection) {
+    console.log("2");
+    // debugger;
+    try {
+      var selection = window.getSelection();
+      var range = document.createRange();
+      range.selectNodeContents(element);
+      console.log("2-8");
+      selection.removeAllRanges();
+      selection.addRange(range);
+      console.log("2-9");
+    } catch (e) {
+      console.warn(e);
+    }
+  } else {
+    console.log("3");
+  }
+}
 
 getFileName = function () {
   seconds = document.getElementsByClassName("video-stream")[0].currentTime;
@@ -47,6 +133,8 @@ addButtonOnYoutubePlayer = function () {
   btn.classList.add("ytp-button");
   btn.classList.add("ytp-screenshot");
   btn.style.width = "auto";
+  // btn.title =
+  // "You can also press ctrl+e (or cmd+e) to copy screenshot to clipboard.";
   btn.appendChild(t);
   var youtubeRightButtonsDiv = document.querySelector(".ytp-right-controls");
   youtubeRightButtonsDiv.insertBefore(btn, youtubeRightButtonsDiv.firstChild);

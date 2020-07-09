@@ -15,5 +15,11 @@
   "options_ui": {
     "page": "options/index.html"
   },
-  "permissions": ["storage"]
+  "permissions": ["storage", "clipboardWrite", "clipboardRead"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "addon@example.com",
+      "strict_min_version": "42.0"
+    }
+  }
 }
