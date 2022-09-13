@@ -6,7 +6,7 @@ https://addons.mozilla.org/en-US/developers/addon/youtube-screenshot-button/
 
 # Description
 * This add-on adds extra button on youtube player to download the screenshot of video.
-* Enjoy seamless experience from this very light weight add-on very.
+* Enjoy seamless experience from this very light weight add-on.
 * This addon is completely safe to use.
 * This is an open source project, find the code on https://github.com/gurumukhi/youtube-screenshot.
 
