@@ -1,14 +1,59 @@
 var loggingEnabled = false;
 var initCalled = false;
 
+extractQuality = function(content) {
+  // Keep only first word as content is expected to look like:
+  // - 240p
+  // - 1080p HD
+  // - 2160p 4K
+  let firstWord = content.split(" ")[0];
+  let lastLetter = firstWord.slice(-1);
+
+  if (lastLetter == "p") {
+    let quality = firstWord.slice(0, -1);
+    let qualityInt = parseInt(quality, 10);
+    return isNaN(qualityInt) ? 0 : qualityInt;
+  }
+
+  return 0;
+}
+
 // Take screenshot
 captureScreenshot = function () {
   logger("Capturing screenshot");
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
   var ctx = canvas.getContext("2d");
-  canvas.width = parseInt(video.style.width);
-  canvas.height = parseInt(video.style.height);
+
+  let height = 0, width = 0;
+
+  // Click on settings button to ensure all settings are loaded in DOM
+  let settinsButton = document.querySelector(".ytp-settings-button");
+  if (settinsButton) {
+    settinsButton.click();
+    let qualitySpans = document.querySelectorAll(".ytp-settings-menu .ytp-menuitem-content span");
+    if (qualitySpans.length == 2) {
+      // Span content is expected to be "Auto" and automatically selected value here
+      height = extractQuality(qualitySpans[1].textContent);
+    } else if (qualitySpans.length == 1) {
+      height = extractQuality(qualitySpans[0].textContent);
+    }
+  }
+
+  if (height > 0) {
+    // Extract ratio
+    let videoWidth = parseInt(video.style.width);
+    let videoHeight = parseInt(video.style.height);
+    let ratio = videoWidth / videoHeight;
+
+    // Set canvas size according to video quality, not viewport size
+    canvas.width = Math.ceil(height * ratio);
+    canvas.height = height;
+  } else {
+    canvas.width = parseInt(video.style.width);
+    canvas.height = parseInt(video.style.height);
+  }
+
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   downloadFile(canvas);
 };
