@@ -1,6 +1,10 @@
 var loggingEnabled = false;
 var initCalled = false;
 
+// Image format
+var imageFormat = "image/jpeg";
+var imageFormatExtension = "jpeg";
+
 // Take screenshot
 captureScreenshot = function () {
   logger("Capturing screenshot");
@@ -16,7 +20,7 @@ captureScreenshot = function () {
 downloadFile = function (canvas) {
   var aClass = "youtube-screenshot-a";
   var a = document.createElement("a");
-  a.href = canvas.toDataURL("image/jpeg");
+  a.href = canvas.toDataURL(imageFormat);
   a.download = getFileName();
   a.style.display = "none";
   a.classList.add(aClass);
@@ -36,7 +40,7 @@ getFileName = function () {
   if (ss.length == 1) {
     ss = "0" + ss;
   }
-  return `${window.document.title} - ${mm}:${ss}.jpeg`;
+  return `${window.document.title} - ${mm}:${ss}.${imageFormatExtension}`;
 };
 
 addButtonOnYoutubePlayer = function (controlsDiv) {
@@ -103,6 +107,15 @@ storageItem.then((result) => {
     logger("Addon initializing!");
     loggingEnabled = true;
   }
+
+  if (result.imageFormat === "png") {
+    if (result.imageFormat === "png") {
+      imageFormat = "image/png";
+      imageFormatExtension = "png";
+    }
+  }
+
+  logger(`Setting image format to: ${imageFormat}`);
 
   waitForYoutubeControls(controlsDiv => {
     addButtonOnYoutubePlayer(controlsDiv);
