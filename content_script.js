@@ -65,24 +65,15 @@ logger = function (message) {
   }
 };
 
-init = function () {
-  if (initCalled) {
-    console.log("NOT SETTING");
-    return;
+// Initialization
+console.log("Initializing Youtube Screenshot Addon");
+
+var storageItem = browser.storage.local.get();
+storageItem.then((result) => {
+  if (result.YouTubeScreenshotAddonisDebugModeOn) {
+    logger("Addon initializing!");
+    loggingEnabled = true;
   }
-
-  console.log("SETTING");
-  initCalled = true;
-  // Initialization
-  var storageItem = browser.storage.local.get();
-  storageItem.then((result) => {
-    if (result.YouTubeScreenshotAddonisDebugModeOn) {
-      logger("Addon initializing!");
-      loggingEnabled = true;
-    }
-    addButtonOnYoutubePlayer();
-    addEventListener();
-  });
-};
-
-init();
+  addButtonOnYoutubePlayer();
+  addEventListener();
+});
