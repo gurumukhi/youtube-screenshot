@@ -39,17 +39,16 @@ getFileName = function () {
   return `${window.document.title} - ${mm}:${ss}.jpeg`;
 };
 
-addButtonOnYoutubePlayer = function () {
+addButtonOnYoutubePlayer = function (controlsDiv) {
   logger("Adding screenshot button");
-  var btn = document.createElement("button");
-  var t = document.createTextNode("Screenshot");
+  let btn = document.createElement("button");
+  let t = document.createTextNode("Screenshot");
   btn.classList.add("ytp-time-display");
   btn.classList.add("ytp-button");
   btn.classList.add("ytp-screenshot");
   btn.style.width = "auto";
   btn.appendChild(t);
-  var youtubeRightButtonsDiv = document.querySelector(".ytp-right-controls");
-  youtubeRightButtonsDiv.insertBefore(btn, youtubeRightButtonsDiv.firstChild);
+  controlsDiv.insertBefore(btn, controlsDiv.firstChild);
 };
 
 addEventListener = function () {
@@ -58,6 +57,36 @@ addEventListener = function () {
   youtubeScreenshotButton.removeEventListener("click", captureScreenshot);
   youtubeScreenshotButton.addEventListener("click", captureScreenshot);
 };
+
+function waitForYoutubeControls(callback) {
+  const controlsClass = "ytp-right-controls";
+
+  const controlsDiv = document.querySelector(`.${controlsClass}`);
+  if (controlsDiv) {
+    callback(controlsDiv);
+    return;
+  }
+
+  // Controls are not yet ready, wait for them
+  logger("Wait for Youtube controls");
+
+  let observer = new MutationObserver((mutations) => {
+    mutations.forEach(mutation => {
+      if (!mutation.addedNodes)
+        return;
+
+      for (let element of mutation.addedNodes) {
+        if (element.classList.contains(controlsClass)) {
+          observer.disconnect();
+          logger("Found Youtube controls");
+          callback(element);
+        }
+      }
+    })
+  })
+
+  observer.observe(document.body, { childList: true, subtree: true });
+}
 
 logger = function (message) {
   if (loggingEnabled) {
@@ -74,6 +103,9 @@ storageItem.then((result) => {
     logger("Addon initializing!");
     loggingEnabled = true;
   }
-  addButtonOnYoutubePlayer();
-  addEventListener();
+
+  waitForYoutubeControls(controlsDiv => {
+    addButtonOnYoutubePlayer(controlsDiv);
+    addEventListener();
+  });
 });
