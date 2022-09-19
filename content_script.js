@@ -7,8 +7,8 @@ captureScreenshot = function () {
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
   var ctx = canvas.getContext("2d");
-  canvas.width = parseInt(video.style.width);
-  canvas.height = parseInt(video.style.height);
+  canvas.width = parseInt(video.videoWidth);
+  canvas.height = parseInt(video.videoHeight);
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   downloadFile(canvas);
 };
