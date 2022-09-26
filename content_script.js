@@ -1,6 +1,10 @@
 var loggingEnabled = false;
 var initCalled = false;
 
+// Image format
+var imageFormat = "image/jpeg";
+var imageFormatExtension = "jpeg";
+
 // Take screenshot
 captureScreenshot = function () {
   logger("Capturing screenshot");
@@ -16,7 +20,7 @@ captureScreenshot = function () {
 downloadFile = function (canvas) {
   var aClass = "youtube-screenshot-a";
   var a = document.createElement("a");
-  a.href = canvas.toDataURL("image/jpeg");
+  a.href = canvas.toDataURL(imageFormat);
   a.download = getFileName();
   a.style.display = "none";
   a.classList.add(aClass);
@@ -36,7 +40,7 @@ getFileName = function () {
   if (ss.length == 1) {
     ss = "0" + ss;
   }
-  return `${window.document.title} - ${mm}:${ss}.jpeg`;
+  return `${window.document.title} - ${mm}:${ss}.${imageFormatExtension}`;
 };
 
 addButtonOnYoutubePlayer = function (controlsDiv) {
@@ -49,13 +53,10 @@ addButtonOnYoutubePlayer = function (controlsDiv) {
   btn.style.width = "auto";
   btn.appendChild(t);
   controlsDiv.insertBefore(btn, controlsDiv.firstChild);
-};
 
-addEventListener = function () {
   logger("Adding button event listener");
-  var youtubeScreenshotButton = document.querySelector(".ytp-screenshot");
-  youtubeScreenshotButton.removeEventListener("click", captureScreenshot);
-  youtubeScreenshotButton.addEventListener("click", captureScreenshot);
+  btn.removeEventListener("click", captureScreenshot);
+  btn.addEventListener("click", captureScreenshot);
 };
 
 function waitForYoutubeControls(callback) {
@@ -104,8 +105,16 @@ storageItem.then((result) => {
     loggingEnabled = true;
   }
 
+  if (result.imageFormat === "png") {
+    if (result.imageFormat === "png") {
+      imageFormat = "image/png";
+      imageFormatExtension = "png";
+    }
+  }
+
+  logger(`Setting image format to: ${imageFormat}`);
+
   waitForYoutubeControls(controlsDiv => {
     addButtonOnYoutubePlayer(controlsDiv);
-    addEventListener();
   });
 });
