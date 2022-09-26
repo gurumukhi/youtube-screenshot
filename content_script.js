@@ -53,13 +53,10 @@ addButtonOnYoutubePlayer = function (controlsDiv) {
   btn.style.width = "auto";
   btn.appendChild(t);
   controlsDiv.insertBefore(btn, controlsDiv.firstChild);
-};
 
-addEventListener = function () {
   logger("Adding button event listener");
-  var youtubeScreenshotButton = document.querySelector(".ytp-screenshot");
-  youtubeScreenshotButton.removeEventListener("click", captureScreenshot);
-  youtubeScreenshotButton.addEventListener("click", captureScreenshot);
+  btn.removeEventListener("click", captureScreenshot);
+  btn.addEventListener("click", captureScreenshot);
 };
 
 function waitForYoutubeControls(callback) {
@@ -119,6 +116,5 @@ storageItem.then((result) => {
 
   waitForYoutubeControls(controlsDiv => {
     addButtonOnYoutubePlayer(controlsDiv);
-    addEventListener();
   });
 });
