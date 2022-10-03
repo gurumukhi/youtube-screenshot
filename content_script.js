@@ -18,14 +18,14 @@ captureScreenshot = function () {
   if (copyToClipboardEnabled)
     copyToClipboard(canvas);
   else
-    downloadFile(canvas);
+    downloadFile(canvas, video);
 };
 
-downloadFile = function (canvas) {
+downloadFile = function (canvas, video) {
   var aClass = "youtube-screenshot-a";
   var a = document.createElement("a");
   a.href = canvas.toDataURL(imageFormat);
-  a.download = getFileName();
+  a.download = getFileName(video);
   a.style.display = "none";
   a.classList.add(aClass);
   document.body.appendChild(a);
@@ -49,8 +49,8 @@ function copyToClipboard(canvas) {
     }, "image/png");
 }
 
-getFileName = function () {
-  seconds = document.getElementsByClassName("video-stream")[0].currentTime;
+getFileName = function (video) {
+  seconds = video.currentTime;
   mins = seconds / 60;
   secs = seconds % 60;
   m = mins.toString();
