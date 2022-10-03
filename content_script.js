@@ -1,5 +1,4 @@
 var loggingEnabled = false;
-var initCalled = false;
 
 // Image format
 var imageFormat = "image/jpeg";
