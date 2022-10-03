@@ -1,4 +1,5 @@
 var loggingEnabled = false;
+var copyToClipboardEnabled = false;
 
 // Image format
 var imageFormat = "image/jpeg";
@@ -13,7 +14,11 @@ captureScreenshot = function () {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  downloadFile(canvas);
+
+  if (copyToClipboardEnabled)
+    copyToClipboard(canvas);
+  else
+    downloadFile(canvas);
 };
 
 downloadFile = function (canvas) {
@@ -27,6 +32,22 @@ downloadFile = function (canvas) {
   document.querySelector(`.${aClass}`).click();
   document.body.removeChild(a);
 };
+
+function copyToClipboard(canvas) {
+  logger("Copying to clipboard");
+
+  canvas.toBlob((blob) => {
+    // Send the data to background script as navigator.clipboard.write()
+    // is not yet supported by default on Firefox
+    browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob})
+      .then((e) => {
+        if (e)
+          logger(`Failed to copy to clipboad: ${e.message}`);
+        else
+          logger("Successfully copied to clipboard");
+      });
+    }, "image/png");
+}
 
 getFileName = function () {
   seconds = document.getElementsByClassName("video-stream")[0].currentTime;
@@ -111,14 +132,16 @@ storageItem.then((result) => {
     loggingEnabled = true;
   }
 
-  if (result.imageFormat === "png") {
+  if (result.screenshotAction === "clipboard") {
+    copyToClipboardEnabled = true;
+  } else {
     if (result.imageFormat === "png") {
       imageFormat = "image/png";
       imageFormatExtension = "png";
     }
-  }
 
-  logger(`Setting image format to: ${imageFormat}`);
+    logger(`Setting image format to: ${imageFormat}`);
+  }
 
   waitForYoutubeControls(controlsDiv => {
     addButtonOnYoutubePlayer(controlsDiv);
