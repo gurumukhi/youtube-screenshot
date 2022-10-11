@@ -44,6 +44,13 @@ getFileName = function () {
 };
 
 addButtonOnYoutubePlayer = function (controlsDiv) {
+  // Check if button already present
+  let previousBtn = document.querySelector("button.ytp-screenshot");
+  if (previousBtn) {
+    logger("Removing previous screenshot button");
+    previousBtn.remove();
+  }
+
   logger("Adding screenshot button");
   let btn = document.createElement("button");
   let t = document.createTextNode("Screenshot");
