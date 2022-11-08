@@ -6,18 +6,29 @@
   </head>
   <body>
     <div class="form">
-      <label>Debug mode (for verbose logging in browser console): </label>
-      <input type="radio" name="debugMode" value="debugOn"> On &nbsp; &nbsp;
-      <input type="radio" name="debugMode" value="debugOff"> Off &nbsp; &nbsp;&nbsp; &nbsp;
-      <br/>
-      <label>Screenshot format: </label>
-      <select name="format">
-      <option value="jpeg">JPEG</option>
-      <option value="png">PNG</option>
-      </select>
-      <br/>
+      <div id="debug">
+        <label>Debug mode (for verbose logging in browser console): </label>
+        <input type="radio" name="debugMode" value="debugOn"> On &nbsp; &nbsp;
+        <input type="radio" name="debugMode" value="debugOff"> Off &nbsp; &nbsp;&nbsp; &nbsp;
+      </div>
+
+      <div id="action">
+        <label>Screenshot button action: </label>
+        <select name="action">
+          <option value="file">Download file</option>
+          <option value="clipboard">Copy to clipboard</option>
+        </select>
+      </div>
+
+      <div id="format">
+        <label>Screenshot format: </label>
+        <select name="format">
+          <option value="jpeg">JPEG</option>
+          <option value="png">PNG</option>
+        </select>
+      </div>
+
       <button id="save">Save</button>
-      <br/>
     </div>
     <script src="script.js"></script>
   </body>

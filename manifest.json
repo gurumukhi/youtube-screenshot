@@ -12,8 +12,12 @@
       "js": ["content_script.js"]
     }
   ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
   "options_ui": {
     "page": "options/index.html"
   },
-  "permissions": ["storage"]
+  "permissions": ["storage", "clipboardWrite", "notifications"]
 }

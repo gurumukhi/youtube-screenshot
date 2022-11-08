@@ -1,5 +1,5 @@
 var loggingEnabled = false;
-var initCalled = false;
+var copyToClipboardEnabled = false;
 
 // Image format
 var imageFormat = "image/jpeg";
@@ -11,17 +11,21 @@ captureScreenshot = function () {
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
   var ctx = canvas.getContext("2d");
-  canvas.width = parseInt(video.videoWidth);
-  canvas.height = parseInt(video.videoHeight);
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  downloadFile(canvas);
+
+  if (copyToClipboardEnabled)
+    copyToClipboard(canvas);
+  else
+    downloadFile(canvas, video);
 };
 
-downloadFile = function (canvas) {
+downloadFile = function (canvas, video) {
   var aClass = "youtube-screenshot-a";
   var a = document.createElement("a");
   a.href = canvas.toDataURL(imageFormat);
-  a.download = getFileName();
+  a.download = getFileName(video);
   a.style.display = "none";
   a.classList.add(aClass);
   document.body.appendChild(a);
@@ -29,8 +33,24 @@ downloadFile = function (canvas) {
   document.body.removeChild(a);
 };
 
-getFileName = function () {
-  seconds = document.getElementsByClassName("video-stream")[0].currentTime;
+function copyToClipboard(canvas) {
+  logger("Copying to clipboard");
+
+  canvas.toBlob((blob) => {
+    // Send the data to background script as navigator.clipboard.write()
+    // is not yet supported by default on Firefox
+    browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob})
+      .then((e) => {
+        if (e)
+          logger(`Failed to copy to clipboad: ${e.message}`);
+        else
+          logger("Successfully copied to clipboard");
+      });
+    }, "image/png");
+}
+
+getFileName = function (video) {
+  seconds = video.currentTime;
   mins = seconds / 60;
   secs = seconds % 60;
   m = mins.toString();
@@ -112,14 +132,16 @@ storageItem.then((result) => {
     loggingEnabled = true;
   }
 
-  if (result.imageFormat === "png") {
+  if (result.screenshotAction === "clipboard") {
+    copyToClipboardEnabled = true;
+  } else {
     if (result.imageFormat === "png") {
       imageFormat = "image/png";
       imageFormatExtension = "png";
     }
-  }
 
-  logger(`Setting image format to: ${imageFormat}`);
+    logger(`Setting image format to: ${imageFormat}`);
+  }
 
   waitForYoutubeControls(controlsDiv => {
     addButtonOnYoutubePlayer(controlsDiv);
