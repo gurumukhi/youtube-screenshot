@@ -7,6 +7,11 @@ var imageFormatExtension = "jpeg";
 
 // Take screenshot
 captureScreenshot = function () {
+  // Check for encrypted content
+  if (document.querySelector('video').mediaKeys != null) {
+    alert("Cannot screenshot copyright-protected content.");
+    return;
+  }
   logger("Capturing screenshot");
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
