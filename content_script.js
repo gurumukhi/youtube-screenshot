@@ -9,7 +9,7 @@ var imageFormatExtension = "jpeg";
 captureScreenshot = function () {
   // Check for encrypted content
   if (document.querySelector('video').mediaKeys != null) {
-    alert("Cannot screenshot copyright-protected content.");
+    alert("Purchased content cannot be screenshotted due to encryption placed on them to prevent piracy.");
     return;
   }
   logger("Capturing screenshot");
