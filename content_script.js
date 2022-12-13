@@ -7,19 +7,12 @@ var imageFormatExtension = "jpeg";
 
 // Take screenshot
 captureScreenshot = function () {
-  logger("Attempting to capture screenshot");
+  logger("Capturing screenshot");
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
-  // Check for encrypted content
   if (video.mediaKeys != null) {
-    browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob})
-      .then((e) => {
-        if (e)
-          logger(`Failed to copy to clipboad: ${e.message}`);
-        else
-          logger("Successfully copied to clipboard");
-      });
-    }, "image/png");
+    console.log("drm protected 1");
+    browser.runtime.sendMessage({cmd: "protectionError"});
     return;
   }
   var ctx = canvas.getContext("2d");
