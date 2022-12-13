@@ -18,4 +18,17 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true;
   }
+  if (message.cmd === "encryptionError") {
+    message.data.arrayBuffer()
+      .then((data) => {
+            browser.notifications.create({
+              type: "basic",
+              title: "Youtube Screenshot",
+              message: "Cannot screenshot DRM-protected content.",
+            });
+      })
+      .catch((e) => sendResponse(e));
+
+    return true;
+  }
 });
