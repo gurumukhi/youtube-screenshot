@@ -7,14 +7,21 @@ var imageFormatExtension = "jpeg";
 
 // Take screenshot
 captureScreenshot = function () {
-  // Check for encrypted content
-  if (document.querySelector('video').mediaKeys != null) {
-    alert("Purchased content cannot be screenshotted due to encryption placed on them to prevent piracy.");
-    return;
-  }
-  logger("Capturing screenshot");
+  logger("Attempting to capture screenshot");
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
+  // Check for encrypted content
+  if (video.mediaKeys != null) {
+    browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob})
+      .then((e) => {
+        if (e)
+          logger(`Failed to copy to clipboad: ${e.message}`);
+        else
+          logger("Successfully copied to clipboard");
+      });
+    }, "image/png");
+    return;
+  }
   var ctx = canvas.getContext("2d");
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
