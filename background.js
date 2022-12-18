@@ -17,8 +17,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .catch((e) => sendResponse(e));
 
     return true;
-  }
-  else if (message.cmd === "showProtectionError") {
+  } else if (message.cmd === "showProtectionError") {
     browser.notifications.create({
       type: "basic",
       title: "Youtube Screenshot",
