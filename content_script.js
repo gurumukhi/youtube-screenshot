@@ -11,8 +11,7 @@ captureScreenshot = function () {
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
   if (video.mediaKeys != null) {
-    console.log("drm protected 1");
-    browser.runtime.sendMessage({cmd: "protectionError"});
+    browser.runtime.sendMessage({cmd: "showProtectionError"});
     return;
   }
   var ctx = canvas.getContext("2d");
