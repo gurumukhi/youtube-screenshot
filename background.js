@@ -19,7 +19,6 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   else if (message.cmd === "showProtectionError") {
-    console.log("drm protected 2");
     browser.notifications.create({
       type: "basic",
       title: "Youtube Screenshot",
