@@ -10,6 +10,10 @@ captureScreenshot = function () {
   logger("Capturing screenshot");
   var canvas = document.createElement("canvas");
   var video = document.querySelector("video");
+  if (video.mediaKeys != null) {
+    browser.runtime.sendMessage({cmd: "showProtectionError"});
+    return;
+  }
   var ctx = canvas.getContext("2d");
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
