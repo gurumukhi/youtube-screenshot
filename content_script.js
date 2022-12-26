@@ -63,13 +63,13 @@ function copyToClipboard(canvas) {
 }
 
 getFileName = function (video) {
-  seconds = video.currentTime;
-  mins = seconds / 60;
-  secs = seconds % 60;
-  m = mins.toString();
-  s = secs.toString();
-  mm = m.substring(0, m.indexOf("."));
-  ss = s.substring(0, s.indexOf("."));
+  const seconds = video.currentTime;
+  const mins = seconds / 60;
+  const secs = seconds % 60;
+  const m = mins.toString();
+  const s = secs.toString();
+  const mm = m.substring(0, m.indexOf("."));
+  let ss = s.substring(0, s.indexOf("."));
   if (ss.length == 1) {
     ss = "0" + ss;
   }
