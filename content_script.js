@@ -37,15 +37,13 @@ captureScreenshot = function () {
 };
 
 downloadFile = function (canvas, video) {
-  var aClass = "youtube-screenshot-a";
-  var a = document.createElement("a");
+  let a = document.createElement("a");
   a.href = canvas.toDataURL(imageFormat);
   a.download = getFileName(video);
   a.style.display = "none";
-  a.classList.add(aClass);
   document.body.appendChild(a);
-  document.querySelector(`.${aClass}`).click();
-  document.body.removeChild(a);
+  a.click();
+  a.remove();
 };
 
 function copyToClipboard(canvas) {
