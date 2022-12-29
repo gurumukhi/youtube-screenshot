@@ -66,18 +66,30 @@ function copyToClipboard(canvas) {
     }, "image/png");
 }
 
-getFileName = function (video) {
+function getFileName(video) {
+  let timeString = "";
   const seconds = video.currentTime;
-  const mins = seconds / 60;
-  const secs = seconds % 60;
-  const m = mins.toString();
-  const s = secs.toString();
-  const mm = m.substring(0, m.indexOf("."));
-  let ss = s.substring(0, s.indexOf("."));
-  if (ss.length == 1) {
-    ss = "0" + ss;
+  let mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds - (mins * 60));
+
+  let s = secs.toString();
+  if (s.length == 1)
+    s = "0" + s;
+
+  if (mins >= 60) {
+    const hours = Math.floor(mins / 60);
+    mins -= (hours * 60);
+
+    let m = mins.toString();
+    if (m.length == 1)
+      m = "0" + m;
+
+    timeString = `${hours}-${m}-${s}`;
+  } else {
+    timeString += `${mins}-${s}`;
   }
-  return `${window.document.title} - ${mm}:${ss}.${imageFormatExtension}`;
+
+  return `${window.document.title} - ${timeString}.${imageFormatExtension}`;
 };
 
 function addButtonOnRegularPlayer(container) {
