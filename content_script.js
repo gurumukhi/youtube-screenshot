@@ -1,4 +1,8 @@
-var loggingEnabled = false;
+// Logger is disabled by default
+let logger = (message) => {
+  // Nothing
+};
+
 var copyToClipboardEnabled = false;
 
 // Image format
@@ -210,20 +214,17 @@ function waitForControls(regularCallback, shortsCallback) {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-logger = function (message) {
-  if (loggingEnabled) {
-    console.log(`Youtube Screenshot Addon: ${message}`);
-  }
-};
-
-// Initialization
+// Initialization (logger is not yet really initialized for the moment)
 console.log("Initializing Youtube Screenshot Addon");
 
-var storageItem = browser.storage.local.get();
+let storageItem = browser.storage.local.get();
 storageItem.then((result) => {
   if (result.YouTubeScreenshotAddonisDebugModeOn) {
-    logger("Addon initializing!");
-    loggingEnabled = true;
+    logger = (message) => {
+        console.log(`Youtube Screenshot Addon: ${message}`);
+    };
+
+    logger("Logger enabled");
   }
 
   if (result.screenshotAction === "clipboard") {
