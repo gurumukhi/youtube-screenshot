@@ -92,53 +92,46 @@ function getFileName(video) {
   return `${window.document.title} - ${timeString}.${imageFormatExtension}`;
 };
 
-function addButtonOnRegularPlayer(container) {
+function addButtonOnPlayer(container, regularNotShorts) {
+  const btnClass = regularNotShorts ? "ytp-screenshot" : "ytd-screenshot";
+  const type = regularNotShorts ? "regular" : "shorts";
+
   // Check if button already present
-  let previousBtn = container.querySelector("button.ytp-screenshot");
+  let previousBtn = container.querySelector(`button.${btnClass}`);
   if (previousBtn) {
-    logger("Removing previous regular screenshot button");
+    logger(`Removing previous ${type} screenshot button`);
     previousBtn.remove();
   }
 
-  logger("Adding regular screenshot button");
+  logger(`Adding ${type} screenshot button`);
   let btn = document.createElement("button");
   let t = document.createTextNode("Screenshot");
-  btn.classList.add("ytp-time-display");
-  btn.classList.add("ytp-button");
-  btn.classList.add("ytp-screenshot");
+
+  if (regularNotShorts) {
+    btn.classList.add("ytp-time-display");
+    btn.classList.add("ytp-button");
+  } else {
+    btn.classList.add("ytd-shorts-player-controls");
+    btn.style.color = getComputedStyle(container.querySelector("yt-icon")).color;
+
+    btn.style.border = "none";
+    btn.style.cursor = "pointer";
+    btn.style.background = "none";
+  }
+
+  btn.classList.add(btnClass);
   btn.style.width = "auto";
   btn.appendChild(t);
-  container.insertBefore(btn, container.firstChild);
 
-  logger("Adding regular button event listener");
+  if (regularNotShorts)
+    container.insertBefore(btn, container.firstChild);
+  else
+    container.insertBefore(btn, container.querySelector("yt-icon-button").nextSibling);
+
+  logger(`Adding ${type} button event listener`);
   btn.removeEventListener("click", captureScreenshot);
   btn.addEventListener("click", captureScreenshot);
 };
-
-function addButtonOnShortsPlayer(container) {
-  // Check if button already present
-  let previousBtn = container.querySelector("button.ytd-screenshot");
-  if (previousBtn) {
-    logger("Removing previous shorts screenshot button");
-    previousBtn.remove();
-  }
-
-  let btn = document.createElement("button");
-  let t = document.createTextNode("Screenshot");
-  btn.classList.add("ytd-shorts-player-controls");
-  btn.classList.add("ytd-screenshot");
-  btn.style.color = getComputedStyle(container.querySelector("yt-icon")).color;
-  btn.style.width = "auto";
-  btn.style.border = "none";
-  btn.style.cursor = "pointer";
-  btn.style.background = "none";
-  btn.appendChild(t);
-  container.insertBefore(btn, container.querySelector("yt-icon-button").nextSibling);
-
-  logger("Adding shorts button event listener");
-  btn.removeEventListener("click", captureScreenshot);
-  btn.addEventListener("click", captureScreenshot);
-}
 
 function observeShortsContainer(element, shortsCallback) {
   logger("Observe shorts container");
@@ -252,10 +245,10 @@ storageItem.then((result) => {
 
   waitForControls(
     (regularControls) => {
-      addButtonOnRegularPlayer(regularControls);
+      addButtonOnPlayer(regularControls, true);
     },
     (shortsControls) => {
-      addButtonOnShortsPlayer(shortsControls);
+      addButtonOnPlayer(shortsControls, false);
     }
   );
 });
