@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YouTube Screenshot",
-  "description": "Take screenshots from YouTube video",
+  "description": "Take screenshots from YouTube Video & Shorts",
   "version": "3.0.0",
   "icons": {
     "96": "icons/icon.png"
