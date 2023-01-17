@@ -1,7 +1,26 @@
 .form {
+  font-family: 'Gill Sans';
   width: 100%;
+  line-height: 40px;
+}
+
+.form label {
+  width: 50%;
+  display: inline-block;
+  text-align: right;
 }
 
 .form div {
   margin-bottom: 5px;
+}
+
+.form select {
+  font-family: 'Gill Sans';
+}
+
+.form #save {
+  width: 50%;
+  text-align: center;
+  margin-left: 25%;
+  font-family: 'Gill Sans';
 }
