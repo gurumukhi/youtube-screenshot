@@ -224,11 +224,8 @@ function waitForControls(regularCallback, shortsCallback) {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-// Initialization (logger is not yet really initialized for the moment)
-console.log("Initializing Youtube Screenshot Addon");
-
-let storageItem = browser.storage.local.get();
-storageItem.then((result) => {
+async function loadConfiguration() {
+  let result = await browser.storage.local.get();
   if (result.YouTubeScreenshotAddonisDebugModeOn) {
     logger = (message) => {
         console.log(`Youtube Screenshot Addon: ${message}`);
@@ -247,7 +244,12 @@ storageItem.then((result) => {
 
     logger(`Setting image format to: ${currentConfiguration.imageFormat}`);
   }
+}
 
+// Initialization (logger is not yet really initialized for the moment)
+console.log("Initializing Youtube Screenshot Addon");
+
+loadConfiguration().then(() => {
   waitForControls(
     (regularControls) => {
       addButtonOnPlayer(regularControls, true);
