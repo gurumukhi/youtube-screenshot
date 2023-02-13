@@ -3,11 +3,13 @@ let logger = (message) => {
   // Nothing
 };
 
-var copyToClipboardEnabled = false;
+let currentConfiguration = {
+  copyToClipboard: false,
 
-// Image format
-var imageFormat = "image/jpeg";
-var imageFormatExtension = "jpeg";
+  // Image format
+  imageFormat: "image/jpeg",
+  imageFormatExtension: "jpeg",
+};
 
 // Shorts container tag and active attribute
 const shortsContainerTag = "ytd-reel-video-renderer";
@@ -34,15 +36,15 @@ captureScreenshot = function () {
   canvas.height = parseInt(video.videoHeight);
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  if (copyToClipboardEnabled)
+  if (currentConfiguration.copyToClipboard)
     copyToClipboard(canvas);
   else
     downloadFile(canvas, video);
 };
 
-downloadFile = function (canvas, video) {
+function downloadFile(canvas, video) {
   let a = document.createElement("a");
-  a.href = canvas.toDataURL(imageFormat);
+  a.href = canvas.toDataURL(currentConfiguration.imageFormat);
   a.download = getFileName(video);
   a.style.display = "none";
   document.body.appendChild(a);
@@ -89,7 +91,7 @@ function getFileName(video) {
     timeString += `${mins}-${s}`;
   }
 
-  return `${window.document.title} - ${timeString}.${imageFormatExtension}`;
+  return `${window.document.title} - ${timeString}.${currentConfiguration.imageFormatExtension}`;
 };
 
 function addButtonOnPlayer(container, regularNotShorts) {
@@ -233,14 +235,14 @@ storageItem.then((result) => {
   }
 
   if (result.screenshotAction === "clipboard") {
-    copyToClipboardEnabled = true;
+    currentConfiguration.copyToClipboard = true;
   } else {
     if (result.imageFormat === "png") {
-      imageFormat = "image/png";
-      imageFormatExtension = "png";
+      currentConfiguration.imageFormat = "image/png";
+      currentConfiguration.imageFormatExtension = "png";
     }
 
-    logger(`Setting image format to: ${imageFormat}`);
+    logger(`Setting image format to: ${currentConfiguration.imageFormat}`);
   }
 
   waitForControls(
