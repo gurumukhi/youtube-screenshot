@@ -3,13 +3,29 @@ const actionClipboardInput = document.querySelector("input[value=actionClipboard
 const formatFieldset = document.querySelector("fieldset#format");
 const formatPngInput = document.querySelector("input[value=formatPng]");
 
-function saveOptions(e) {
-  browser.storage.local.set({
+// Send message to active tabs to reload configuration
+async function sendReloadToTabs() {
+  const tabs = await browser.tabs.query({});
+
+  for (let tab of tabs) {
+    try {
+      await browser.tabs.sendMessage(tab.id, { cmd: "reloadConfiguration" });
+    } catch {
+      // Ignore
+    }
+  }
+}
+
+async function saveOptions(e) {
+  e.preventDefault();
+
+  await browser.storage.local.set({
     YouTubeScreenshotAddonisDebugModeOn: debugOnInput.checked,
     screenshotAction: actionClipboardInput.checked ? "clipboard" : "file",
     imageFormat: formatPngInput.checked ? "png" : "jpeg",
   });
-  e.preventDefault();
+
+  sendReloadToTabs();
 }
 
 function handleAction() {

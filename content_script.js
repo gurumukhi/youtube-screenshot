@@ -1,7 +1,13 @@
 // Logger is disabled by default
-let logger = (message) => {
+function logNull(message) {
   // Nothing
-};
+}
+
+function logConsole(message) {
+  console.log(`Youtube Screenshot Addon: ${message}`);
+}
+
+let logger = logNull;
 
 let currentConfiguration = {
   copyToClipboard: false,
@@ -44,7 +50,7 @@ captureScreenshot = function () {
 
 function downloadFile(canvas, video) {
   let a = document.createElement("a");
-  a.href = canvas.toDataURL(currentConfiguration.imageFormat);
+  a.href = canvas.toDataURL(`${currentConfiguration.imageFormat}`);
   a.download = getFileName(video);
   a.style.display = "none";
   document.body.appendChild(a);
@@ -225,21 +231,27 @@ function waitForControls(regularCallback, shortsCallback) {
 }
 
 async function loadConfiguration() {
-  let result = await browser.storage.local.get();
-  if (result.YouTubeScreenshotAddonisDebugModeOn) {
-    logger = (message) => {
-        console.log(`Youtube Screenshot Addon: ${message}`);
-    };
+  logger("Load configuration");
 
+  const result = await browser.storage.local.get();
+  if (result.YouTubeScreenshotAddonisDebugModeOn) {
+    logger = logConsole;
     logger("Logger enabled");
+  } else {
+    logger = logNull;
   }
 
   if (result.screenshotAction === "clipboard") {
     currentConfiguration.copyToClipboard = true;
   } else {
+    currentConfiguration.copyToClipboard = false;
+
     if (result.imageFormat === "png") {
       currentConfiguration.imageFormat = "image/png";
       currentConfiguration.imageFormatExtension = "png";
+    } else {
+      currentConfiguration.imageFormat = "image/jpeg";
+      currentConfiguration.imageFormatExtension = "jpeg";
     }
 
     logger(`Setting image format to: ${currentConfiguration.imageFormat}`);
@@ -258,4 +270,14 @@ loadConfiguration().then(() => {
       addButtonOnPlayer(shortsControls, false);
     }
   );
+});
+
+// Handle messages
+browser.runtime.onMessage.addListener(request => {
+  logger("Received message from background script");
+
+  if (request.cmd === "reloadConfiguration")
+    loadConfiguration();
+
+  return Promise.resolve({});
 });
