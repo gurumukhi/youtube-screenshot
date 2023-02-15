@@ -1,27 +1,24 @@
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.cmd === "copyToClipboard") {
-    message.data.arrayBuffer()
-      .then((data) => {
-          browser.clipboard.setImageData(data, "png")
-          .then(() => {
-            sendResponse();
+function showNotification(message) {
+  browser.notifications.create({
+    type: "basic",
+    title: "Youtube Screenshot",
+    message: message,
+  });
+}
 
-            browser.notifications.create({
-              type: "basic",
-              title: "Youtube Screenshot",
-              message: "Screenshot successfully copied to clipboard.",
-            });
-          })
-        .catch((e) => sendResponse(e));
-      })
-      .catch((e) => sendResponse(e));
+async function copyToClipboard(data) {
+  let buffer = await data.arrayBuffer();
+  await browser.clipboard.setImageData(buffer, "png");
+  showNotification("Screenshot successfully copied to clipboard.");
+}
 
-    return true;
-  } else if (message.cmd === "showProtectionError") {
-    browser.notifications.create({
-      type: "basic",
-      title: "Youtube Screenshot",
-      message: "Cannot screenshot DRM-protected content.",
-    });
+browser.runtime.onMessage.addListener(request => {
+  if (request.cmd === "copyToClipboard") {
+    copyToClipboard(request.data)
+      .then(() => { return Promise.resolve({}); })
+      .catch((e) => { return Promise.resolve(e); });
+  } else if (request.cmd === "showProtectionError") {
+    showNotification("Cannot screenshot DRM-protected content.");
+    return Promise.resolve({});
   }
 });
