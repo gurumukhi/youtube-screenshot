@@ -5,10 +5,7 @@ let logger = (message) => {
 
 let currentConfiguration = {
   copyToClipboard: false,
-
-  // Image format
-  imageFormat: "image/jpeg",
-  imageFormatExtension: "jpeg",
+  imageFormat: "jpeg",
 };
 
 // Shorts container tag and active attribute
@@ -44,7 +41,7 @@ captureScreenshot = function () {
 
 function downloadFile(canvas, video) {
   let a = document.createElement("a");
-  a.href = canvas.toDataURL(currentConfiguration.imageFormat);
+  a.href = canvas.toDataURL(`image/${currentConfiguration.imageFormat}`);
   a.download = getFileName(video);
   a.style.display = "none";
   document.body.appendChild(a);
@@ -91,7 +88,7 @@ function getFileName(video) {
     timeString += `${mins}-${s}`;
   }
 
-  return `${window.document.title} - ${timeString}.${currentConfiguration.imageFormatExtension}`;
+  return `${window.document.title} - ${timeString}.${currentConfiguration.imageFormat}`;
 };
 
 function addButtonOnPlayer(container, regularNotShorts) {
@@ -222,6 +219,8 @@ function waitForControls(regularCallback, shortsCallback) {
 }
 
 async function loadConfiguration() {
+  logger("Load configuration");
+
   let result = await browser.storage.local.get();
   if (result.YouTubeScreenshotAddonisDebugModeOn) {
     logger = (message) => {
@@ -234,11 +233,9 @@ async function loadConfiguration() {
   if (result.screenshotAction === "clipboard") {
     currentConfiguration.copyToClipboard = true;
   } else {
-    if (result.imageFormat === "png") {
-      currentConfiguration.imageFormat = "image/png";
-      currentConfiguration.imageFormatExtension = "png";
-    }
+    currentConfiguration.copyToClipboard = false;
 
+    currentConfiguration.imageFormat = result.imageFormat ?? "jpeg";
     logger(`Setting image format to: ${currentConfiguration.imageFormat}`);
   }
 }
@@ -255,4 +252,14 @@ loadConfiguration().then(() => {
       addButtonOnPlayer(shortsControls, false);
     }
   );
+});
+
+// Handle messages
+browser.runtime.onMessage.addListener(request => {
+  logger("Received message from background script");
+
+  if (request.cmd === "reloadConfiguration")
+    loadConfiguration();
+
+  return Promise.resolve({});
 });
