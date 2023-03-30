@@ -1,7 +1,5 @@
 // Logger is disabled by default
-let logger = (message) => {
-  // Nothing
-};
+let logger = () => { /* Nothing */ };
 
 let currentConfiguration = {
   copyToClipboard: false,
@@ -228,6 +226,8 @@ async function loadConfiguration() {
     };
 
     logger("Logger enabled");
+  } else {
+    logger = () => { /* Nothing */ };
   }
 
   if (result.screenshotAction === "clipboard") {
