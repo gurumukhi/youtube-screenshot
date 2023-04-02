@@ -2,6 +2,7 @@ const debugOnInput = document.querySelector("input[value=debugOn]");
 const actionClipboardInput = document.querySelector("input[value=actionClipboard]");
 const formatFieldset = document.querySelector("fieldset#format");
 const formatPngInput = document.querySelector("input[value=formatPng]");
+const shortcutOffInput = document.querySelector("input[value=shortcutOff]");
 
 // Send message to active tabs to reload configuration
 async function sendReloadToTabs() {
@@ -23,6 +24,7 @@ async function saveOptions(e) {
     YouTubeScreenshotAddonisDebugModeOn: debugOnInput.checked,
     screenshotAction: actionClipboardInput.checked ? "clipboard" : "file",
     imageFormat: formatPngInput.checked ? "png" : "jpeg",
+    shortcutEnabled: !shortcutOffInput.checked,
   });
 
   sendReloadToTabs();
@@ -43,20 +45,29 @@ function restoreOptions() {
   });
 
   browser.storage.local.get().then((value) => {
+    // Debug mode
     if (value.YouTubeScreenshotAddonisDebugModeOn)
-    debugOnInput.checked = true;
+      debugOnInput.checked = true;
     else
-    document.querySelector("input[value=debugOff]").checked = true;
+      document.querySelector("input[value=debugOff]").checked = true;
 
+    // Screenshot action
     if (value.screenshotAction === "clipboard")
-    actionClipboardInput.checked = true;
+      actionClipboardInput.checked = true;
     else
-    document.querySelector("input[value=actionFile]").checked = true;
+      document.querySelector("input[value=actionFile]").checked = true;
 
+    // Image format
     if (value.imageFormat === "png")
-    formatPngInput.checked = true;
+      formatPngInput.checked = true;
     else
-    document.querySelector("input[value=formatJpeg]").checked = true;
+      document.querySelector("input[value=formatJpeg]").checked = true;
+
+    // Shortcut
+    if (value.shortcutEnabled === false)
+      shortcutOffInput.checked = true
+    else
+      document.querySelector("input[value=shortcutOn]").checked = true;
 
     handleAction();
   });

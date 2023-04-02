@@ -15,6 +15,8 @@ let currentConfiguration = {
   // Image format
   imageFormat: "image/jpeg",
   imageFormatExtension: "jpeg",
+
+  shortcutEnabled: true,
 };
 
 // Shorts container tag and active attribute
@@ -241,6 +243,11 @@ async function loadConfiguration() {
     logger = logNull;
   }
 
+  // Shortcut
+  currentConfiguration.shortcutEnabled = result.shortcutEnabled ?? true;
+  logger(`${currentConfiguration.shortcutEnabled ? "Enabling" : "Disabling"} screenshot shortcut`);
+
+  // Button action and image format
   if (result.screenshotAction === "clipboard") {
     currentConfiguration.copyToClipboard = true;
   } else {
@@ -280,4 +287,36 @@ browser.runtime.onMessage.addListener(request => {
     loadConfiguration();
 
   return Promise.resolve({});
+});
+
+// Handle shortcut
+document.addEventListener('keydown', e => {
+  if (!currentConfiguration.shortcutEnabled) {
+    logger("Shortcut is disabled");
+    return;
+  }
+
+  const tagName = e.target.tagName;
+  if (e.target.isContentEditable
+      || (tagName === "INPUT")
+      || (tagName === "SELECT")
+      || (tagName === "TEXTAREA")) {
+      return;
+    }
+
+  if (!e.shiftKey)
+    return;
+
+  if ((e.key === 'a') || (e.key === 'A')) {
+    logger("Catching screenshot shortcut");
+
+    // Simply search for the screenshot button and simulate click
+    let btn = document.querySelector("button.ytp-screenshot")
+              || document.querySelector("button.ytd-screenshot");
+
+    if (btn) {
+      btn.click();
+      return;
+    }
+  }
 });
