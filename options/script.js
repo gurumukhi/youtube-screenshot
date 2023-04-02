@@ -26,9 +26,16 @@ async function restoreOptions() {
 
   // Debug
   const debugCheckbox = document.querySelector("input[name=debugMode]");
-  debugCheckbox.checked = value.YouTubeScreenshotAddonisDebugModeOn;
+  debugCheckbox.checked = value.YouTubeScreenshotAddonisDebugModeOn ?? false;
   handleSettingsChange(debugCheckbox, "YouTubeScreenshotAddonisDebugModeOn", () => {
-    return document.querySelector('input[name=debugMode]').checked;
+    return debugCheckbox.checked;
+  });
+
+  // Shortcut
+  const shortcutCheckbox = document.querySelector("input[name=shortcut]");
+  shortcutCheckbox.checked = value.shortcutEnabled ?? true;
+  handleSettingsChange(shortcutCheckbox, "shortcutEnabled", () => {
+    return shortcutCheckbox.checked;
   });
 
   // Button action

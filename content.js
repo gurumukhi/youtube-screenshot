@@ -4,6 +4,7 @@ let logger = () => { /* Nothing */ };
 let currentConfiguration = {
   copyToClipboard: false,
   imageFormat: "jpeg",
+  shortcutEnabled: true,
 };
 
 // Shorts container tag and active attribute
@@ -220,6 +221,8 @@ async function loadConfiguration() {
   logger("Load configuration");
 
   let result = await browser.storage.local.get();
+
+  // Debug
   if (result.YouTubeScreenshotAddonisDebugModeOn) {
     logger = (message) => {
         console.log(`Youtube Screenshot Addon: ${message}`);
@@ -230,6 +233,11 @@ async function loadConfiguration() {
     logger = () => { /* Nothing */ };
   }
 
+  // Shortcut
+  currentConfiguration.shortcutEnabled = result.shortcutEnabled ?? true;
+  logger(`${currentConfiguration.shortcutEnabled ? "Enabling" : "Disabling"} screenshot shortcut`);
+
+  // Button action and image format
   if (result.screenshotAction === "clipboard") {
     currentConfiguration.copyToClipboard = true;
   } else {
@@ -262,4 +270,38 @@ browser.runtime.onMessage.addListener(request => {
     loadConfiguration();
 
   return Promise.resolve({});
+});
+
+// Handle shortcut
+document.addEventListener('keydown', e => {
+  if (!currentConfiguration.shortcutEnabled) {
+    logger("Shortcut is disabled");
+    return;
+  }
+
+  const tagName = e.target.tagName;
+  if (e.target.isContentEditable
+      || (tagName === "INPUT")
+      || (tagName === "SELECT")
+      || (tagName === "TEXTAREA")) {
+      return;
+    }
+
+  if (!e.shiftKey)
+    return;
+
+  if ((e.key === 'a') || (e.key === 'A')) {
+    logger("Catching screenshot shortcut");
+
+    // Simply search for the screenshot button and simulate click
+    let btn = document.querySelector("button.ytp-screenshot");
+    if (btn) {
+      btn.click();
+      return;
+    }
+
+    btn = document.querySelector("button.ytd-screenshot");
+    if (btn)
+      btn.click();
+  }
 });
