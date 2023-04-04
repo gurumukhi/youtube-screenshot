@@ -5,3 +5,13 @@
 .form div {
   margin-bottom: 5px;
 }
+
+.form div span {
+  display: block;
+  margin-bottom: 10px;
+}
+
+label {
+  display: inline-block;
+  width: 30%;
+}

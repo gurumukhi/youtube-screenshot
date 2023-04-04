@@ -11,41 +11,56 @@ async function sendReloadToTabs() {
   }
 }
 
-async function saveOptions(e) {
-  e.preventDefault();
-
-  await browser.storage.local.set({
-    YouTubeScreenshotAddonisDebugModeOn: document.querySelector('input[name=debugMode]:checked') &&
-    document.querySelector('input[name=debugMode]:checked').value === 'debugOn',
-    screenshotAction: document.querySelector('select[name=action]').value,
-    imageFormat: document.querySelector('select[name=format]').value,
+function handleSettingsChange(item, field, getValue) {
+  item.addEventListener("change",
+    async () => {
+      let value = {};
+      value[field] = getValue();
+      await browser.storage.local.set(value);
+      sendReloadToTabs();
   });
-
-  sendReloadToTabs();
 }
 
 async function restoreOptions() {
-  document.querySelector("select[name=action]").addEventListener("change", (event) => {
-    document.querySelector('div#format').hidden =
-    document.querySelector('option[value=clipboard]').selected;
+  let value = await browser.storage.local.get();
+
+  // Debug
+  const debugCheckbox = document.querySelector("input[name=debugMode]");
+  debugCheckbox.checked = value.YouTubeScreenshotAddonisDebugModeOn;
+  handleSettingsChange(debugCheckbox, "YouTubeScreenshotAddonisDebugModeOn", () => {
+    return document.querySelector('input[name=debugMode]').checked;
   });
 
-  let value = await browser.storage.local.get();
-  if (value.YouTubeScreenshotAddonisDebugModeOn) {
-    document.querySelector('input[value=debugOn]').checked = true;
-  } else {
-    document.querySelector('input[value=debugOff]').checked = true;
-  }
-
+  // Button action
+  const clipboardOption = document.querySelector("option[value=clipboard]");
+  const formatDiv = document.querySelector("#format");
   if (value.screenshotAction === "clipboard") {
-    document.querySelector('option[value=clipboard]').selected = true;
-    document.querySelector('#format').hidden = true;
+    clipboardOption.selected = true;
+    formatDiv.hidden = true;
   }
 
+  const actionSelect = document.querySelector("select[name=action]");
+  actionSelect.addEventListener("change",
+    async () => {
+      formatDiv.hidden = clipboardOption.selected;
+
+      await browser.storage.local.set({
+        screenshotAction: actionSelect.value
+      });
+
+      sendReloadToTabs();
+  });
+
+  // Image format
   if (value.imageFormat === "png")
-    document.querySelector('option[value=png]').selected = true;
+    document.querySelector("option[value=png]").selected = true;
+
+  const formatSelect = document.querySelector("select[name=format]");
+  handleSettingsChange(
+    formatSelect,
+    "imageFormat",
+    () => { return formatSelect.value; }
+  );
 }
 
-document.querySelector('input[value=debugOff]').checked = true; // Default behaviour
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.querySelector("#save").addEventListener("click", saveOptions);

@@ -7,9 +7,9 @@
   <body>
     <div class="form">
       <div id="debug">
-        <label>Debug mode (for verbose logging in browser console): </label>
-        <input type="radio" name="debugMode" value="debugOn"> On &nbsp; &nbsp;
-        <input type="radio" name="debugMode" value="debugOff"> Off &nbsp; &nbsp;&nbsp; &nbsp;
+        <label>Debug mode: </label>
+        <input type="checkbox" name="debugMode" />
+        <span>(verbose logging in browser console)</span>
       </div>
 
       <div id="action">
@@ -27,8 +27,6 @@
           <option value="png">PNG</option>
         </select>
       </div>
-
-      <button id="save">Save</button>
     </div>
     <script src="script.js"></script>
   </body>
