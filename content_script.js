@@ -86,7 +86,7 @@ function getFileName(video) {
 
     timeString = `${hours}-${m}-${s}`;
   } else {
-    timeString += `${mins}-${s}`;
+    timeString += `0-`+`${mins}-${s}`;
   }
 
   return `${window.document.title} - ${timeString}.${imageFormatExtension}`;
