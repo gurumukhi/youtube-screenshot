@@ -117,6 +117,9 @@ function addButtonOnPlayer(container, regularNotShorts) {
     btn.style.border = "none";
     btn.style.cursor = "pointer";
     btn.style.background = "none";
+
+    // Ensure the pointer event are not disabled for our custom button
+    btn.style.pointerEvents = "all";
   }
 
   btn.classList.add(btnClass);
