@@ -9,29 +9,37 @@
       <fieldset id="debug">
         <legend>Debug mode (for verbose logging in browser console)</legend>
         <div>
-          <input type="radio" name="debugMode" value="debugOn" />
-          <label for="debugOn">On</label>
-        </div>
-        <div>
           <input type="radio" name="debugMode" value="debugOff" />
           <label for="debugOff">Off</label>
+        </div>
+        <div>
+          <input type="radio" name="debugMode" value="debugOn" />
+          <label for="debugOn">On</label>
         </div>
       </fieldset>
 
       <fieldset id="action">
         <legend>Screenshot button action</legend>
-        <select name="action">
-          <option value="file">Download file</option>
-          <option value="clipboard">Copy to clipboard</option>
-        </select>
+        <div>
+          <input type="radio" name="action" value="actionFile" />
+          <label for="actionFile">Download file</label>
+        </div>
+        <div>
+          <input type="radio" name="action" value="actionClipboard" />
+          <label for="actionClipboard">Copy to clipboard</label>
+        </div>
       </fieldset>
 
       <fieldset id="format">
         <legend>Screenshot format</legend>
-        <select name="format">
-          <option value="jpeg">JPEG</option>
-          <option value="png">PNG</option>
-        </select>
+        <div>
+          <input type="radio" name="format" value="formatJpeg" />
+          <label for="formatJpeg">JPEG</label>
+        </div>
+        <div>
+          <input type="radio" name="format" value="formatPng" />
+          <label for="formatPng">PNG</label>
+        </div>
       </fieldset>
 
       <button id="save">Save</button>
