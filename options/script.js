@@ -10,7 +10,7 @@ function saveOptions(e) {
 function restoreOptions() {
     document.querySelector("select[name=action]").addEventListener("change", (event) => {
         console.log(event);
-        document.querySelector('div#format').hidden =
+        document.querySelector('#format').hidden =
             document.querySelector('option[value=clipboard]').selected;
     });
 
@@ -22,7 +22,6 @@ function restoreOptions() {
         }
 
         if (value.screenshotAction === "clipboard") {
-            console.log(document.querySelector('#format'));
             document.querySelector('option[value=clipboard]').selected = true;
             document.querySelector('#format').hidden = true;
         }
