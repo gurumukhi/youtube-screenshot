@@ -1,7 +1,6 @@
 function saveOptions(e) {
     browser.storage.local.set({
-        YouTubeScreenshotAddonisDebugModeOn: document.querySelector('input[name=debugMode]:checked') &&
-                    document.querySelector('input[name=debugMode]:checked').value === 'debugOn',
+        YouTubeScreenshotAddonisDebugModeOn: document.querySelector('input[value=debugOn]').checked,
         screenshotAction: document.querySelector('select[name=action]').value,
         imageFormat: document.querySelector('select[name=format]').value,
     });
@@ -15,9 +14,7 @@ function restoreOptions() {
             document.querySelector('option[value=clipboard]').selected;
     });
 
-    var storageItem = browser.storage.local.get();
-    storageItem.then((value) => {
-        console.log(value);
+    browser.storage.local.get().then((value) => {
         if (value.YouTubeScreenshotAddonisDebugModeOn) {
             document.querySelector('input[value=debugOn]').checked = true;
         } else {
