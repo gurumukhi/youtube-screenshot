@@ -6,27 +6,41 @@
   </head>
   <body>
     <div class="form">
-      <div id="debug">
-        <label>Debug mode (for verbose logging in browser console): </label>
-        <input type="radio" name="debugMode" value="debugOn"> On &nbsp; &nbsp;
-        <input type="radio" name="debugMode" value="debugOff"> Off &nbsp; &nbsp;&nbsp; &nbsp;
-      </div>
+      <fieldset id="debug">
+        <legend>Debug mode (for verbose logging in browser console)</legend>
+        <div>
+          <input type="radio" name="debugMode" value="debugOff" />
+          <label for="debugOff">Off</label>
+        </div>
+        <div>
+          <input type="radio" name="debugMode" value="debugOn" />
+          <label for="debugOn">On</label>
+        </div>
+      </fieldset>
 
-      <div id="action">
-        <label>Screenshot button action: </label>
-        <select name="action">
-          <option value="file">Download file</option>
-          <option value="clipboard">Copy to clipboard</option>
-        </select>
-      </div>
+      <fieldset id="action">
+        <legend>Screenshot button action</legend>
+        <div>
+          <input type="radio" name="action" value="actionFile" />
+          <label for="actionFile">Download file</label>
+        </div>
+        <div>
+          <input type="radio" name="action" value="actionClipboard" />
+          <label for="actionClipboard">Copy to clipboard</label>
+        </div>
+      </fieldset>
 
-      <div id="format">
-        <label>Screenshot format: </label>
-        <select name="format">
-          <option value="jpeg">JPEG</option>
-          <option value="png">PNG</option>
-        </select>
-      </div>
+      <fieldset id="format">
+        <legend>Screenshot format</legend>
+        <div>
+          <input type="radio" name="format" value="formatJpeg" />
+          <label for="formatJpeg">JPEG</label>
+        </div>
+        <div>
+          <input type="radio" name="format" value="formatPng" />
+          <label for="formatPng">PNG</label>
+        </div>
+      </fieldset>
 
       <button id="save">Save</button>
     </div>
