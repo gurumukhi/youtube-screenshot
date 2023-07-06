@@ -27,7 +27,12 @@ async function saveOptions(e) {
     shortcutEnabled: !shortcutOffInput.checked,
   });
 
-  sendReloadToTabs();
+  await sendReloadToTabs();
+
+  // In case the preferences are saved from popup,
+  // just close this window
+  if (location.hash === '#popup')
+    window.close();
 }
 
 function handleAction() {
