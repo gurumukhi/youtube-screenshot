@@ -1,5 +1,6 @@
 const debugOnInput = document.querySelector("input[value=debugOn]");
 const actionClipboardInput = document.querySelector("input[value=actionClipboard]");
+const actionBothInput = document.querySelector("input[value=actionBoth]");
 const formatFieldset = document.querySelector("fieldset#format");
 const formatPngInput = document.querySelector("input[value=formatPng]");
 const shortcutOffInput = document.querySelector("input[value=shortcutOff]");
@@ -20,9 +21,16 @@ async function sendReloadToTabs() {
 async function saveOptions(e) {
   e.preventDefault();
 
+  // Sceenshot action
+  let screenshotAction = "file";
+  if (actionClipboardInput.checked)
+    screenshotAction = "clipboard";
+  else if (actionBothInput.checked)
+    screenshotAction = "both";
+
   await browser.storage.local.set({
     YouTubeScreenshotAddonisDebugModeOn: debugOnInput.checked,
-    screenshotAction: actionClipboardInput.checked ? "clipboard" : "file",
+    screenshotAction: screenshotAction,
     imageFormat: formatPngInput.checked ? "png" : "jpeg",
     shortcutEnabled: !shortcutOffInput.checked,
   });
@@ -59,6 +67,8 @@ function restoreOptions() {
     // Screenshot action
     if (value.screenshotAction === "clipboard")
       actionClipboardInput.checked = true;
+    else if (value.screenshotAction == "both")
+      actionBothInput.checked = true;
     else
       document.querySelector("input[value=actionFile]").checked = true;
 
