@@ -10,6 +10,7 @@ function logConsole(message) {
 let logger = logNull;
 
 let currentConfiguration = {
+  downloadFile: true,
   copyToClipboard: false,
 
   // Image format
@@ -46,7 +47,8 @@ captureScreenshot = function () {
 
   if (currentConfiguration.copyToClipboard)
     copyToClipboard(canvas);
-  else
+
+  if (currentConfiguration.downloadFile)
     downloadFile(canvas, video);
 };
 
@@ -249,10 +251,18 @@ async function loadConfiguration() {
 
   // Button action and image format
   if (result.screenshotAction === "clipboard") {
+    currentConfiguration.downloadFile = false;
+    currentConfiguration.copyToClipboard = true;
+  } else if (result.screenshotAction === "both") {
+    currentConfiguration.downloadFile = true;
     currentConfiguration.copyToClipboard = true;
   } else {
+    // screenshotAction === "file"
+    currentConfiguration.downloadFile = true;
     currentConfiguration.copyToClipboard = false;
+  }
 
+  if (currentConfiguration.downloadFile) {
     if (result.imageFormat === "png") {
       currentConfiguration.imageFormat = "image/png";
       currentConfiguration.imageFormatExtension = "png";
