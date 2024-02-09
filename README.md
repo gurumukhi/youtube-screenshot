@@ -2,7 +2,7 @@
 A cross browser add-on to take screenshots on youtube videos with just a single click
 
 ## Firefox listing link
-https://addons.mozilla.org/en-US/developers/addon/youtube-screenshot-button/
+https://addons.mozilla.org/firefox/addon/youtube-screenshot-button/
 
 ## Description
 * This add-on adds extra button on youtube player to download the screenshot of video.
