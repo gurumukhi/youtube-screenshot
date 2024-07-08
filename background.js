@@ -17,7 +17,8 @@ browser.runtime.onMessage.addListener(request => {
     browser.downloads.download({
       url: URL.createObjectURL(request.data),
       filename: request.filename,
-      conflictAction: "uniquify"
+      saveAs: request.saveAs,
+      conflictAction: "uniquify",
     })
     .then(() => { return Promise.resolve({}); })
     .catch((e) => { return Promise.resolve(e); });

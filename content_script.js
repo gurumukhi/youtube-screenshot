@@ -18,6 +18,7 @@ let currentConfiguration = {
   imageFormatExtension: "jpeg",
 
   shortcutEnabled: true,
+  saveAsEnabled: false,
 };
 
 // Shorts container tag and active attribute
@@ -54,7 +55,7 @@ captureScreenshot = function () {
 
 function downloadFile(canvas, video) {
   canvas.toBlob((blob) => {
-    browser.runtime.sendMessage({cmd: "downloadFile", data: blob, filename: getFileName(video)})
+    browser.runtime.sendMessage({cmd: "downloadFile", data: blob, filename: getFileName(video), saveAs: currentConfiguration.saveAsEnabled})
       .then((e) => {
         if (e)
           logger(`Failed to download file: ${e.message}`);
@@ -250,6 +251,10 @@ async function loadConfiguration() {
   // Shortcut
   currentConfiguration.shortcutEnabled = result.shortcutEnabled ?? true;
   logger(`${currentConfiguration.shortcutEnabled ? "Enabling" : "Disabling"} screenshot shortcut`);
+
+  // Save as
+  currentConfiguration.saveAsEnabled = result.saveAsEnabled ?? false;
+  logger(`${currentConfiguration.saveAsEnabled ? "Enabling" : "Disabling"} save as download`);
 
   // Button action and image format
   if (result.screenshotAction === "clipboard") {

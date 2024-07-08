@@ -4,6 +4,7 @@ const actionBothInput = document.querySelector("input[value=actionBoth]");
 const formatFieldset = document.querySelector("fieldset#format");
 const formatPngInput = document.querySelector("input[value=formatPng]");
 const shortcutOffInput = document.querySelector("input[value=shortcutOff]");
+const saveAsOnInput = document.querySelector("input[value=saveAsOn]");
 
 // Send message to active tabs to reload configuration
 async function sendReloadToTabs() {
@@ -33,6 +34,7 @@ async function saveOptions(e) {
     screenshotAction: screenshotAction,
     imageFormat: formatPngInput.checked ? "png" : "jpeg",
     shortcutEnabled: !shortcutOffInput.checked,
+    saveAsEnabled: saveAsOnInput.checked,
   });
 
   await sendReloadToTabs();
@@ -83,6 +85,12 @@ function restoreOptions() {
       shortcutOffInput.checked = true
     else
       document.querySelector("input[value=shortcutOn]").checked = true;
+
+    // Save as
+    if (value.saveAsEnabled === true)
+      saveAsOnInput.checked = true
+    else
+      document.querySelector("input[value=saveAsOff]").checked = true;
 
     handleAction();
   });
