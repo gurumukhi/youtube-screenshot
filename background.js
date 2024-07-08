@@ -13,7 +13,15 @@ async function copyToClipboard(data) {
 }
 
 browser.runtime.onMessage.addListener(request => {
-  if (request.cmd === "copyToClipboard") {
+  if (request.cmd === "downloadFile") {
+    browser.downloads.download({
+      url: URL.createObjectURL(request.data),
+      filename: request.filename,
+      conflictAction: "uniquify"
+    })
+    .then(() => { return Promise.resolve({}); })
+    .catch((e) => { return Promise.resolve(e); });
+  } else if (request.cmd === "copyToClipboard") {
     copyToClipboard(request.data)
       .then(() => { return Promise.resolve({}); })
       .catch((e) => { return Promise.resolve(e); });

@@ -50,17 +50,19 @@ captureScreenshot = function () {
 
   if (currentConfiguration.downloadFile)
     downloadFile(canvas, video);
-};
+}
 
 function downloadFile(canvas, video) {
-  let a = document.createElement("a");
-  a.href = canvas.toDataURL(`${currentConfiguration.imageFormat}`);
-  a.download = getFileName(video);
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
+  canvas.toBlob((blob) => {
+    browser.runtime.sendMessage({cmd: "downloadFile", data: blob, filename: getFileName(video)})
+      .then((e) => {
+        if (e)
+          logger(`Failed to download file: ${e.message}`);
+        else
+          logger("Successfully started download file");
+      });
+    }, currentConfiguration.imageFormat);
+}
 
 function copyToClipboard(canvas) {
   logger("Copying to clipboard");
