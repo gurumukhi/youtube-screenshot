@@ -56,12 +56,8 @@ captureScreenshot = function () {
 function downloadFile(canvas, video) {
   canvas.toBlob((blob) => {
     browser.runtime.sendMessage({cmd: "downloadFile", data: blob, filename: getFileName(video), saveAs: currentConfiguration.saveAsEnabled})
-      .then((e) => {
-        if (e)
-          logger(`Failed to download file: ${e.message}`);
-        else
-          logger("Successfully started download file");
-      });
+      .then(() => logger("Successfully started download file"))
+      .catch(e => logger(`Failed to download file: ${e.message}`))
     }, currentConfiguration.imageFormat);
 }
 
@@ -72,12 +68,8 @@ function copyToClipboard(canvas) {
     // Send the data to background script as navigator.clipboard.write()
     // is not yet supported by default on Firefox
     browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob})
-      .then((e) => {
-        if (e)
-          logger(`Failed to copy to clipboad: ${e.message}`);
-        else
-          logger("Successfully copied to clipboard");
-      });
+      .then(() => logger("Successfully copied to clipboard"))
+      .catch(e => logger(`Failed to copy to clipboad: ${e.message}`))
     }, "image/png");
 }
 

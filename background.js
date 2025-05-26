@@ -12,22 +12,24 @@ async function copyToClipboard(data) {
   showNotification("Screenshot successfully copied to clipboard.");
 }
 
-browser.runtime.onMessage.addListener(request => {
-  if (request.cmd === "downloadFile") {
-    browser.downloads.download({
-      url: URL.createObjectURL(request.data),
-      filename: request.filename,
-      saveAs: request.saveAs,
-      conflictAction: "uniquify",
-    })
-    .then(() => { return Promise.resolve({}); })
-    .catch((e) => { return Promise.resolve(e); });
-  } else if (request.cmd === "copyToClipboard") {
-    copyToClipboard(request.data)
-      .then(() => { return Promise.resolve({}); })
-      .catch((e) => { return Promise.resolve(e); });
-  } else if (request.cmd === "showProtectionError") {
-    showNotification("Cannot screenshot DRM-protected content.");
-    return Promise.resolve({});
+browser.runtime.onMessage.addListener(async request => {
+  try {
+    if (request.cmd === "downloadFile") {
+      await browser.downloads.download({
+        url: URL.createObjectURL(request.data),
+        filename: request.filename,
+        saveAs: request.saveAs,
+        conflictAction: "uniquify",
+      });
+    } else if (request.cmd === "copyToClipboard") {
+      return copyToClipboard(request.data);
+    } else if (request.cmd === "showProtectionError") {
+      showNotification("Cannot screenshot DRM-protected content.");
+    }
+
+    // OK
+    return {};
+  } catch(e) {
+    throw e;
   }
 });
