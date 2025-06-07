@@ -1,3 +1,24 @@
+// CSS override
+const style = document.createElement('style');
+style.textContent = `
+  .ytp-right-controls {
+    display: flex !important;
+    margin-left: auto !important;
+  }
+
+  .ytp-chrome-controls {
+    display: flex !important;
+    width: 100% !important;
+    align-items: center !important;
+  }
+
+  .ytp-chrome-bottom {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+`;
+document.head.appendChild(style);
+
 // Logger is disabled by default
 function logNull(message) {
   // Nothing
@@ -112,33 +133,70 @@ function addButtonOnPlayer(container, regularNotShorts) {
 
   logger(`Adding ${type} screenshot button`);
   let btn = document.createElement("button");
-  let t = document.createTextNode("Screenshot");
+  
+  // Create SVG icon
+  btn.innerHTML = `
+    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 15.2C13.767 15.2 15.2 13.767 15.2 12 15.2 10.233 13.767 8.8 12 8.8 10.233 8.8 8.8 10.233 8.8 12 8.8 13.767 10.233 15.2 12 15.2zM9 2 7 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3l-2-2H9zm3 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+    </svg>
+  `;
+
+  // Set common button properties
+  btn.classList.add(btnClass);
+  btn.setAttribute("aria-label", "Take screenshot");
+  btn.setAttribute("title", "Take screenshot");
+  btn.style.cursor = "pointer";
 
   if (regularNotShorts) {
-    btn.classList.add("ytp-time-display");
+    // For regular YouTube player
     btn.classList.add("ytp-button");
+
+    // Remove these:
+    // btn.style.width = "46px";
+    // btn.style.height = "100%";
+    
+    // Instead, rely on YouTube’s native style and adjust the SVG
+    btn.style.display = "flex";
+    btn.style.alignItems = "center";
+    btn.style.justifyContent = "center";
+    btn.style.color = "white";
+    btn.style.padding = "0";
+    btn.style.margin = "0 4px";
+    
+    // Scale down the SVG slightly to match other icons
+    btn.querySelector("svg").style.width = "24px";
+    btn.querySelector("svg").style.height = "24px";
+    btn.querySelector("svg").style.pointerEvents = "none";
+    
+    // Find the controls container and insert properly
+    const controls = document.querySelector(".ytp-right-controls");
+    if (controls) {
+      // Insert before the subtitle button
+      const subtitleButton = controls.querySelector(".ytp-subtitles-button");
+      if (subtitleButton) {
+        subtitleButton.before(btn);
+      } else {
+        // Fallback: insert at end of controls
+        controls.appendChild(btn);
+      }
+    }
   } else {
+    // For YouTube Shorts
     btn.classList.add("ytd-shorts-player-controls");
     btn.style.color = getComputedStyle(container.querySelector("yt-icon")).color;
-
     btn.style.border = "none";
-    btn.style.cursor = "pointer";
     btn.style.background = "none";
-
-    // Ensure the pointer event are not disabled for our custom button
+    btn.style.width = "24px";
+    btn.style.height = "24px";
+    btn.style.padding = "0";
+    btn.style.margin = "0 8px";
     btn.style.pointerEvents = "all";
+    
+    // Insert in Shorts controls
+    container.insertBefore(btn, container.querySelector("yt-icon-button").nextSibling);
   }
 
-  btn.classList.add(btnClass);
-  btn.style.width = "auto";
-  btn.appendChild(t);
-
-  if (regularNotShorts)
-    container.insertBefore(btn, container.firstChild);
-  else
-    container.insertBefore(btn, container.querySelector("yt-icon-button").nextSibling);
-
-  logger(`Adding ${type} button event listener`);
+  // Add event listener
   btn.removeEventListener("click", captureScreenshot);
   btn.addEventListener("click", captureScreenshot);
 };
