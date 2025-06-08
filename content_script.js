@@ -137,7 +137,7 @@ function addButtonOnPlayer(container, regularNotShorts) {
   // Create SVG icon
   btn.innerHTML = `
     <svg width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 15.2C13.767 15.2 15.2 13.767 15.2 12 15.2 10.233 13.767 8.8 12 8.8 10.233 8.8 8.8 10.233 8.8 12 8.8 13.767 10.233 15.2 12 15.2zM9 2 7 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3l-2-2H9zm3 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+      <path d="M9 2L7 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3l-2-2H9zm3 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
     </svg>
   `;
 
@@ -150,12 +150,8 @@ function addButtonOnPlayer(container, regularNotShorts) {
   if (regularNotShorts) {
     // For regular YouTube player
     btn.classList.add("ytp-button");
-
-    // Remove these:
-    // btn.style.width = "46px";
-    // btn.style.height = "100%";
     
-    // Instead, rely on YouTube’s native style and adjust the SVG
+    // Rely on YouTube’s native style and adjust the SVG
     btn.style.display = "flex";
     btn.style.alignItems = "center";
     btn.style.justifyContent = "center";
@@ -164,9 +160,10 @@ function addButtonOnPlayer(container, regularNotShorts) {
     btn.style.margin = "0 4px";
     
     // Scale down the SVG slightly to match other icons
-    btn.querySelector("svg").style.width = "24px";
-    btn.querySelector("svg").style.height = "24px";
-    btn.querySelector("svg").style.pointerEvents = "none";
+    const svg = btn.querySelector("svg");
+    svg.style.width = "24px";
+    svg.style.height = "24px";
+    svg.style.pointerEvents = "none";    
     
     // Find the controls container and insert properly
     const controls = document.querySelector(".ytp-right-controls");
@@ -196,7 +193,7 @@ function addButtonOnPlayer(container, regularNotShorts) {
     container.insertBefore(btn, container.querySelector("yt-icon-button").nextSibling);
   }
 
-  // Add event listener
+  logger(`Adding ${type} button event listener`);
   btn.removeEventListener("click", captureScreenshot);
   btn.addEventListener("click", captureScreenshot);
 };
