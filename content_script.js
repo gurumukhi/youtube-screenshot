@@ -166,7 +166,7 @@ function addButtonOnPlayer(container, regularNotShorts) {
     svg.style.pointerEvents = "none";    
     
     // Find the controls container and insert properly
-    const controls = document.querySelector(".ytp-right-controls");
+    const controls = container;
     if (controls) {
       // Insert before the subtitle button
       const subtitleButton = controls.querySelector(".ytp-subtitles-button");
