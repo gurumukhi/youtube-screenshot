@@ -4,7 +4,7 @@
   "description": "Take screenshots from YouTube Video & Shorts",
   "manifest_version": 2,
   "icons": {
-    "96": "icons/icon.png"
+    "128": "icons/icon.png"
   },
   "content_scripts": [
     {
