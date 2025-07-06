@@ -21,11 +21,6 @@ let currentConfiguration = {
   saveAsEnabled: false,
 };
 
-// Shorts container tag and active attribute
-const shortsContainerTag = "ytd-reel-video-renderer";
-const shortsContainerTagName = shortsContainerTag.toUpperCase();
-const shortsContainerActiveAttribute = "is-active";
-
 // Take screenshot
 captureScreenshot = function () {
   logger("Capturing screenshot");
@@ -99,6 +94,48 @@ function getFileName(video) {
   return `${window.document.title} - ${timeString}.${currentConfiguration.imageFormatExtension}`;
 };
 
+function setShortsButtonStyle(btn) {
+  btn.innerHTML = `
+    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9 2L7 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3l-2-2H9zm3 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+    </svg>
+  `;
+
+  // Try to mimic YouTube shorts buttons
+  btn.classList.add("yt-icon-button", "ytd-button-renderer", "style-scope");
+  btn.style.cssText = `
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    flex-shrink: 0;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 4px;
+    pointer-events: auto;
+    backdrop-filter: blur(8px);
+    background-color: rgba(0,0,0,0.3);
+  `;
+  btn.onmouseenter = () => {
+    btn.style.backgroundColor = "rgba(40,40,40,0.6)";
+  };
+  btn.onmouseleave = () => {
+    btn.style.backgroundColor = "rgba(0,0,0,0.3)";
+  };
+
+  const svg = btn.querySelector("svg");
+  svg.style.cssText = `
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    color: inherit;
+  `;
+}
+
 function addButtonOnPlayer(container, regularNotShorts) {
   const btnClass = regularNotShorts ? "ytp-screenshot" : "ytd-screenshot";
   const type = regularNotShorts ? "regular" : "shorts";
@@ -112,116 +149,73 @@ function addButtonOnPlayer(container, regularNotShorts) {
 
   logger(`Adding ${type} screenshot button`);
   let btn = document.createElement("button");
-  let t = document.createTextNode("Screenshot");
+  btn.classList.add(btnClass);
 
   if (regularNotShorts) {
-    btn.classList.add("ytp-time-display");
-    btn.classList.add("ytp-button");
-  } else {
-    btn.classList.add("ytd-shorts-player-controls");
-    btn.style.color = getComputedStyle(container.querySelector("yt-icon")).color;
+    btn.classList.add("ytp-time-display", "ytp-button");
+    btn.style.width = "auto";
 
-    btn.style.border = "none";
-    btn.style.cursor = "pointer";
-    btn.style.background = "none";
+    const t = document.createTextNode("Screenshot");
+    btn.appendChild(t);
 
-    // Ensure the pointer event are not disabled for our custom button
-    btn.style.pointerEvents = "all";
-  }
-
-  btn.classList.add(btnClass);
-  btn.style.width = "auto";
-  btn.appendChild(t);
-
-  if (regularNotShorts)
     container.insertBefore(btn, container.firstChild);
-  else
-    container.insertBefore(btn, container.querySelector("yt-icon-button").nextSibling);
+  } else {
+    setShortsButtonStyle(btn);
+    container.appendChild(btn);
+  }
 
   logger(`Adding ${type} button event listener`);
   btn.removeEventListener("click", captureScreenshot);
   btn.addEventListener("click", captureScreenshot);
 };
 
-function observeShortsContainer(element, shortsCallback) {
-  logger("Observe shorts container");
+function searchControls(element, regularCallback, shortsCallback) {
+  const regularControlsSelector = "div.ytp-right-controls";
+  const shortsControlsSelector = "ytd-shorts-player-controls";
 
-  let observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations)
-    {
-      if (mutation.attributeName != shortsContainerActiveAttribute)
-        continue;
-
-      if (element.getAttribute(shortsContainerActiveAttribute) == null) {
-        // No more the active container
-        observer.disconnect();
-
-        // Find the new active container
-        const container = document.querySelector(`${shortsContainerTag}[${shortsContainerActiveAttribute}]`);
-        if (!container) {
-          logger("No more active shorts container");
-          continue;
-        }
-
-        retrieveShortsControls(container, shortsCallback);
-        break;
-      }
+  if (element !== document && element.matches(regularControlsSelector)) {
+    logger("Found regular controls");
+    regularCallback(element);
+  } else {
+    const regularControls = element.querySelector(regularControlsSelector);
+    if (regularControls) {
+      logger("Found regular controls");
+      regularCallback(regularControls);
     }
-  });
+  }
 
-  observer.observe(element, { attributes: true, childList: false, subtree: false });
-}
-
-function retrieveShortsControls(container, shortsCallback) {
-  const controls = container.querySelector("ytd-shorts-player-controls");
-  if (controls) {
-    // Monitor container to catch when active one changes
-    observeShortsContainer(container, shortsCallback);
-
+  if (element !== document && element.matches(shortsControlsSelector)) {
     logger("Found shorts controls");
-    shortsCallback(controls);
+    shortsCallback(element);
+  } else {
+    const shortsControls = element.querySelector(shortsControlsSelector);
+    if (shortsControls) {
+      logger("Found shorts controls");
+      shortsCallback(shortsControls);
+    }
   }
 }
 
 function waitForControls(regularCallback, shortsCallback) {
   logger("Wait for controls");
 
-  const regularControlsClass = "ytp-right-controls";
-
-  const regularControls = document.querySelector(`.${regularControlsClass}`);
-  if (regularControls)
-    regularCallback(regularControls);
-
-  const shortsContainer = document.querySelector(`${shortsContainerTag}[${shortsContainerActiveAttribute}]`);
-  if (shortsContainer)
-    retrieveShortsControls(shortsContainer, shortsCallback);
+  searchControls(document, regularCallback, shortsCallback);
 
   // Monitor controls:
   // - wait for them to be added to document
   // - detect when switching from regular to shorts or vice versa
   logger("Monitor controls");
 
-  let observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (!mutation.addedNodes)
         return;
 
       for (let element of mutation.addedNodes) {
-
         if (element.nodeType != Node.ELEMENT_NODE)
           continue;
 
-        if (element.classList.contains(regularControlsClass)) {
-          logger("Found regular controls");
-          regularCallback(element);
-          continue;
-        }
-
-        if ((element.tagName === shortsContainerTagName)
-          && (element.getAttribute(shortsContainerActiveAttribute) != null)) {
-            retrieveShortsControls(element, shortsCallback);
-            break;
-        }
+        searchControls(element, regularCallback, shortsCallback);
       }
     }
   });
