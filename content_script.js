@@ -15,7 +15,7 @@ let currentConfiguration = {
 
   // Image format
   imageFormat: "image/jpeg",
-  imageFormatExtension: "jpeg",
+  imageFormatExtension: "jpg",
 
   shortcutEnabled: true,
   saveAsEnabled: false,
