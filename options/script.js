@@ -6,6 +6,9 @@ const formatPngInput = document.querySelector("input[value=formatPng]");
 const shortcutOffInput = document.querySelector("input[value=shortcutOff]");
 const saveAsOnInput = document.querySelector("input[value=saveAsOn]");
 
+function isPopup() {
+  return (location.hash === '#popup');
+}
 // Send message to active tabs to reload configuration
 async function sendReloadToTabs() {
   const tabs = await browser.tabs.query({});
@@ -41,7 +44,7 @@ async function saveOptions(e) {
 
   // In case the preferences are saved from popup,
   // just close this window
-  if (location.hash === '#popup')
+  if (isPopup())
     window.close();
 }
 
@@ -98,3 +101,8 @@ function restoreOptions() {
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("#save").addEventListener("click", saveOptions);
+
+// Ensure padding for popup
+if (isPopup()) {
+  document.body.classList.add("popup");
+}
