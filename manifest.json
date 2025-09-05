@@ -19,7 +19,8 @@
   "browser_action": {
     "default_icon": "icons/icon.png",
     "default_title": "YouTube Screenshot",
-    "default_popup": "options/index.html#popup"
+    "default_popup": "options/index.html#popup",
+    "browser_style": true
   },
   "options_ui": {
     "page": "options/index.html"
