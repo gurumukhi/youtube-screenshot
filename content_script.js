@@ -73,6 +73,14 @@ function copyToClipboard(canvas) {
     }, "image/png");
 }
 
+function getTitle() {
+  let title = window.document.title;
+
+  // Remove suffix
+  const suffix = " - YouTube";
+  return title.endsWith(suffix) ? title.slice(0, -suffix.length) : title;
+}
+
 function getFileName(video) {
   let timeString = "";
   const seconds = video.currentTime;
@@ -96,8 +104,8 @@ function getFileName(video) {
     timeString += `0-`+`${mins}-${s}`;
   }
 
-  return `${window.document.title} - ${timeString}.${currentConfiguration.imageFormatExtension}`;
-};
+  return `${getTitle()} - ${timeString}.${currentConfiguration.imageFormatExtension}`;
+}
 
 function setShortsButtonStyle(btn) {
   btn.innerHTML = `
