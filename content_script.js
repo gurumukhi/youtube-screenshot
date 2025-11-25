@@ -21,7 +21,7 @@ let currentConfiguration = {
 };
 
 // Take screenshot
-captureScreenshot = function () {
+async function captureScreenshot() {
   logger("Capturing screenshot");
 
   // Several <video> tags can be present in the document at the same time
@@ -34,6 +34,23 @@ captureScreenshot = function () {
     return;
   }
 
+  if (video.paused) {
+    // Can't wait for a new frame in this case
+    await saveScreenshot(video);
+  } else {
+    // Wait for a new frame hoping it will avoid video artefacts
+    logger("Waiting new video frame");
+
+    video.requestVideoFrameCallback(async () => {
+      logger("New video frame available");
+      await saveScreenshot(video);
+    });
+  }
+}
+
+async function saveScreenshot(video) {
+  logger("Saving screenshot");
+
   let canvas = document.createElement("canvas");
   let ctx = canvas.getContext("2d");
   canvas.width = parseInt(video.videoWidth);
@@ -41,13 +58,18 @@ captureScreenshot = function () {
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   if (currentConfiguration.copyToClipboard)
-    copyToClipboard(canvas);
+    await copyToClipboard(canvas);
 
   if (currentConfiguration.downloadFile)
     downloadFile(canvas, video);
-};
+
+  // Remove the canvas now we're done with it
+  canvas.remove();
+}
 
 function downloadFile(canvas, video) {
+  logger("Downloading file");
+
   let a = document.createElement("a");
   a.href = canvas.toDataURL(`${currentConfiguration.imageFormat}`);
   a.download = getFileName(video);
@@ -60,17 +82,19 @@ function downloadFile(canvas, video) {
 function copyToClipboard(canvas) {
   logger("Copying to clipboard");
 
-  canvas.toBlob((blob) => {
-    // Send the data to background script as navigator.clipboard.write()
-    // is not yet supported by default on Firefox
-    browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob})
-      .then((e) => {
-        if (e)
-          logger(`Failed to copy to clipboad: ${e.message}`);
-        else
-          logger("Successfully copied to clipboard");
-      });
-    }, "image/png");
+  return new Promise((resolve) => {
+    canvas.toBlob(async (blob) => {
+      // Send the data to background script as navigator.clipboard.write()
+      // is not yet supported by default on Firefox
+      let e = await browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob});
+      if (e)
+        logger(`Failed to copy to clipboad: ${e.message}`);
+      else
+        logger("Successfully copied to clipboard");
+
+      resolve();
+      }, "image/png");
+  });
 }
 
 function getTitle() {
