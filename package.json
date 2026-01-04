@@ -1,0 +1,25 @@
+{
+  "name": "youtube-screenshot",
+  "type": "module",
+  "description": "Firefox add-on taking screenshots on YouTube easily",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gurumukhi/youtube-screenshot.git"
+  },
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/gurumukhi/youtube-screenshot/issues"
+  },
+  "homepage": "https://github.com/gurumukhi/youtube-screenshot",
+  "scripts": {
+    "build": "web-ext build --artifacts-dir build --overwrite-dest --filename youtube_screenshot_button-{version}.xpi",
+    "lint": "web-ext lint",
+    "start": "web-ext run -u https://youtube.com"
+  },
+  "dependencies": {
+    "web-ext": "^8.9.0"
+  },
+  "webExt": {
+    "sourceDir": "src"
+  }
+}

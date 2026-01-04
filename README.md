@@ -1,6 +1,6 @@
 # Firefox add-on taking screenshots on YouTube easily
-A [Firefox add-on](https://addons.mozilla.org/firefox/addon/youtube-screenshot-button/
-) to take screenshots on YouTube videos with just a single click or a shortcut.
+A [Firefox add-on](https://addons.mozilla.org/firefox/addon/youtube-screenshot-button/)
+to take screenshots on YouTube videos with just a single click or a shortcut.
 
 ## Description
 * This add-on adds extra button on YouTube player to download the screenshot of video.
@@ -22,4 +22,29 @@ This repository uses a two-tier branching model.
 * [`master`](https://github.com/gurumukhi/youtube-screenshot/tree/master) is right now the	next-version development branch. It contains work targeting the upcoming major release.
 
 ## Support
-* Kindly feel free to open an issue on https://github.com/gurumukhi/youtube-screenshot/issues for any support.
+* Kindly feel free to open an [issue](https://github.com/gurumukhi/youtube-screenshot/issues) for any support.
+* Contributions are also welcome if you'd like to improve this project.
+
+## Project setup
+This project is based on [npm](https://www.npmjs.com/) and uses the standard setup steps.
+
+```
+$ npm install
+```
+This installs all required dependencies especially the [web-ext](https://github.com/mozilla/web-ext) toolkit from Mozilla.
+
+```
+$ npm run lint
+```
+Runs the linter to detect potential issues.
+
+```
+$ npm run start
+```
+Starts the extension in a dedicated instance of Firefox for development.
+The extension is also automatically reloaded after any change in the code.
+
+```
+$ npm run build
+```
+Generates a production-ready build of the extension.
