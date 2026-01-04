@@ -6,9 +6,9 @@ function showNotification(message) {
   });
 }
 
-async function copyToClipboard(data) {
+async function copyToClipboard(data, format) {
   let buffer = await data.arrayBuffer();
-  await browser.clipboard.setImageData(buffer, "png");
+  await browser.clipboard.setImageData(buffer, format.replace(/^image\//, ""));
   showNotification("Screenshot successfully copied to clipboard.");
 }
 
@@ -22,7 +22,7 @@ browser.runtime.onMessage.addListener(async request => {
         conflictAction: "uniquify",
       });
     } else if (request.cmd === "copyToClipboard") {
-      return copyToClipboard(request.data);
+      return copyToClipboard(request.data, request.format);
     } else if (request.cmd === "showProtectionError") {
       showNotification("Cannot screenshot DRM-protected content.");
     }
