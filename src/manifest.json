@@ -25,5 +25,12 @@
   "options_ui": {
     "page": "options/index.html"
   },
-  "permissions": ["storage", "downloads", "clipboardWrite", "notifications"]
+  "permissions": ["storage", "downloads", "clipboardWrite", "notifications"],
+  "browser_specific_settings": {
+    "gecko": {
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
 }
