@@ -1,5 +1,5 @@
 // Logger is disabled by default
-function logNull(message) {
+function logNull() {
   // Nothing
 }
 

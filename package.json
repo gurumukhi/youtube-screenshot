@@ -12,14 +12,18 @@
   },
   "homepage": "https://github.com/gurumukhi/youtube-screenshot",
   "scripts": {
-    "build": "web-ext build --artifacts-dir build --overwrite-dest --filename youtube_screenshot_button-{version}.xpi",
-    "lint": "web-ext lint",
-    "start": "web-ext run -u https://youtube.com"
+    "build-vendor": "esbuild src/vendor.js --bundle --format=esm --outfile=src/vendor.dist.js",
+    "build": "npm run build-vendor && web-ext build --artifacts-dir build --overwrite-dest --filename youtube_screenshot_button-{version}.xpi",
+    "lint": "npm run build-vendor && web-ext lint",
+    "start": "npm run build-vendor && web-ext run -u https://youtube.com"
   },
   "dependencies": {
+    "esbuild": "^0.27.2",
+    "sanitize-filename": "^1.6.3",
     "web-ext": "^8.9.0"
   },
   "webExt": {
-    "sourceDir": "src"
+    "sourceDir": "src",
+    "ignoreFiles": ["vendor.js"]
   }
 }

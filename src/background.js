@@ -1,3 +1,5 @@
+import { vendor } from "./vendor.dist.js";
+
 function showNotification(message) {
   browser.notifications.create({
     type: "basic",
@@ -12,12 +14,17 @@ async function copyToClipboard(data, format) {
   showNotification("Screenshot successfully copied to clipboard.");
 }
 
+function resolveFilename(filename) {
+  filename = vendor.sanitize(filename, { replacement: '_' });
+  return (filename == "") ? "screenshot" : filename;
+}
+
 browser.runtime.onMessage.addListener(async request => {
   try {
     if (request.cmd === "downloadFile") {
       await browser.downloads.download({
         url: URL.createObjectURL(request.data),
-        filename: request.filename,
+        filename: resolveFilename(request.filename),
         saveAs: request.saveAs,
         conflictAction: "uniquify",
       });
