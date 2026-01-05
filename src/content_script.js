@@ -1,5 +1,5 @@
 // Logger is disabled by default
-function logNull(message) {
+function logNull() {
   // Nothing
 }
 
@@ -49,7 +49,7 @@ async function captureScreenshot() {
   }
 }
 
-async function saveScreenshot(video) {
+function saveScreenshot(video) {
   logger("Saving screenshot");
 
   let canvas = document.createElement("canvas");
@@ -58,44 +58,42 @@ async function saveScreenshot(video) {
   canvas.height = parseInt(video.videoHeight);
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  if (currentConfiguration.copyToClipboard)
-    await copyToClipboard(canvas);
-
-  if (currentConfiguration.downloadFile)
-    downloadFile(canvas, video);
-
-  // Remove the canvas now we're done with it
-  canvas.remove();
-}
-
-function downloadFile(canvas, video) {
-  logger("Downloading file");
-
-  let a = document.createElement("a");
-  a.href = canvas.toDataURL(`${currentConfiguration.imageFormat}`);
-  a.download = getFileName(video);
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
-
-function copyToClipboard(canvas) {
-  logger("Copying to clipboard");
-
   return new Promise((resolve) => {
     canvas.toBlob(async (blob) => {
-      // Send the data to background script as navigator.clipboard.write()
-      // is not yet supported by default on Firefox
-      let e = await browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob});
-      if (e)
-        logger(`Failed to copy to clipboad: ${e.message}`);
-      else
-        logger("Successfully copied to clipboard");
+      if (currentConfiguration.copyToClipboard)
+        await copyToClipboard(blob, currentConfiguration.imageFormat);
+
+      if (currentConfiguration.downloadFile)
+        await downloadFile(blob, getFileName(video));
+
+      // Remove the canvas now we're done with it
+      canvas.remove();
 
       resolve();
-      }, "image/png");
+      }, currentConfiguration.imageFormat);
   });
+}
+
+async function downloadFile(blob, filename) {
+  logger("Copying to clipboard");
+
+  let e = browser.runtime.sendMessage({cmd: "downloadFile", data: blob, filename: filename, saveAs: currentConfiguration.saveAsEnabled})
+  if (e)
+    logger(`Failed to download file: ${e.message}`);
+  else
+    logger("Successfully started download file");
+}
+
+async function copyToClipboard(blob, format) {
+  logger("Copying to clipboard");
+
+  // Send the data to background script as navigator.clipboard.write()
+  // is not yet supported by default on Firefox
+  let e = await browser.runtime.sendMessage({cmd: "copyToClipboard", data: blob, format: format});
+  if (e)
+    logger(`Failed to copy to clipboad: ${e.message}`);
+  else
+    logger("Successfully copied to clipboard");
 }
 
 function getTitle() {
