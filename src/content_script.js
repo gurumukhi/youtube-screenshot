@@ -322,36 +322,19 @@ loadConfiguration().then(() => {
 browser.runtime.onMessage.addListener(request => {
   logger("Received message from background script");
 
-  if (request.cmd === "reloadConfiguration")
+  if (request.cmd === "reloadConfiguration") {
     loadConfiguration();
+  } else if (request.cmd === "takeScreenshot") {
+    logger("Received takeScreenshot command from background");
 
-  return Promise.resolve({});
-});
-
-// Handle shortcut
-document.addEventListener('keydown', e => {
-  if (!currentConfiguration.shortcutEnabled) {
-    logger("Shortcut is disabled");
-    return;
-  }
-
-  const tagName = e.target.tagName;
-  if (e.target.isContentEditable
-      || (tagName === "INPUT")
-      || (tagName === "SELECT")
-      || (tagName === "TEXTAREA")) {
+    if (!currentConfiguration.shortcutEnabled) {
+      logger("Shortcut is disabled");
       return;
     }
 
-  if (!e.shiftKey)
-    return;
-
-  if ((e.key === 'a') || (e.key === 'A')) {
-    logger("Catching screenshot shortcut");
-
     // Simply search for the screenshot button and simulate click
-    let btn = document.querySelector("button.ytp-screenshot")
-              || document.querySelector("button.ytd-screenshot");
+    const btn = document.querySelector("button.ytp-screenshot")
+      || document.querySelector("button.ytd-screenshot");
 
     if (btn) {
       btn.click();

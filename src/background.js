@@ -40,3 +40,17 @@ browser.runtime.onMessage.addListener(async request => {
     throw e;
   }
 });
+
+async function sendCommand(cmd)
+{
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  if (tabs.length > 0) {
+    browser.tabs.sendMessage(tabs[0].id, { cmd: cmd });
+  }
+}
+
+browser.commands.onCommand.addListener(cmd => {
+  if (cmd === "takeScreenshot") {
+    sendCommand(cmd);
+  }
+});

@@ -27,6 +27,14 @@
     "page": "options/index.html"
   },
   "permissions": ["storage", "downloads", "clipboardWrite", "notifications"],
+  "commands": {
+    "takeScreenshot": {
+      "suggested_key": {
+        "default": "Alt+A"
+      },
+     "description": "Take a screenshot"
+    }
+  },
   "browser_specific_settings": {
     "gecko": {
       "data_collection_permissions": {
