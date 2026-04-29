@@ -9,15 +9,15 @@
       <fieldset id="action">
         <legend>Screenshot button action</legend>
         <div>
-          <input type="radio" name="action" id="actionFile" value="actionFile" />
+          <input type="radio" name="action" id="actionFile" value="file" />
           <label for="actionFile">Download file</label>
         </div>
         <div>
-          <input type="radio" name="action" id="actionClipboard" value="actionClipboard" />
+          <input type="radio" name="action" id="actionClipboard" value="clipboard" />
           <label for="actionClipboard">Copy to clipboard</label>
         </div>
         <div>
-          <input type="radio" name="action" id="actionBoth" value="actionBoth" />
+          <input type="radio" name="action" id="actionBoth" value="both" />
           <label for="actionBoth">Both</label>
         </div>
       </fieldset>
@@ -25,11 +25,11 @@
       <fieldset id="format">
         <legend>Screenshot format</legend>
         <div>
-          <input type="radio" name="format" id="formatJpeg" value="formatJpeg" />
+          <input type="radio" name="format" id="formatJpeg" value="jpeg" />
           <label for="formatJpeg">JPEG</label>
         </div>
         <div>
-          <input type="radio" name="format" id="formatPng" value="formatPng" />
+          <input type="radio" name="format" id="formatPng" value="png" />
           <label for="formatPng">PNG</label>
         </div>
       </fieldset>
@@ -37,11 +37,11 @@
       <fieldset id="shortcut">
         <legend>Enable shortcut</legend>
         <div>
-          <input type="radio" name="shortcut" id="shortcutOff" value="shortcutOff" />
+          <input type="radio" name="shortcut" id="shortcutOff" value="off" />
           <label for="shortcutOff">Off</label>
         </div>
         <div>
-          <input type="radio" name="shortcut" id="shortcutOn" value="shortcutOn" />
+          <input type="radio" name="shortcut" id="shortcutOn" value="on" />
           <label for="shortcutOn">On</label>
         </div>
       </fieldset>
@@ -49,11 +49,11 @@
       <fieldset id="saveAs">
         <legend>Open file chooser dialog at download</legend>
         <div>
-          <input type="radio" name="saveAs" id="saveAsOff" value="saveAsOff" />
+          <input type="radio" name="saveAs" id="saveAsOff" value="off" />
           <label for="saveAsOff">Off</label>
         </div>
         <div>
-          <input type="radio" name="saveAs" id="saveAsOn" value="saveAsOn" />
+          <input type="radio" name="saveAs" id="saveAsOn" value="on" />
           <label for="saveAsOn">On</label>
         </div>
       </fieldset>
@@ -61,16 +61,17 @@
       <fieldset id="debug">
         <legend>Debug mode (for verbose logging in browser console)</legend>
         <div>
-          <input type="radio" name="debugMode" id="debugOff" value="debugOff" />
+          <input type="radio" name="debugMode" id="debugOff" value="off" />
           <label for="debugOff">Off</label>
         </div>
         <div>
-          <input type="radio" name="debugMode" id="debugOn" value="debugOn" />
+          <input type="radio" name="debugMode" id="debugOn" value="on" />
           <label for="debugOn">On</label>
         </div>
       </fieldset>
 
       <button id="save">Save</button>
+      <button id="restore">Restore to default</button>
     </div>
     <script src="script.js"></script>
   </body>
