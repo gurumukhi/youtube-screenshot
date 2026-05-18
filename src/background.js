@@ -1,4 +1,4 @@
-import { vendor } from "./vendor.dist.js";
+import sanitize from "sanitize-filename";
 
 function showNotification(message) {
   browser.notifications.create({
@@ -15,7 +15,7 @@ async function copyToClipboard(data, format) {
 }
 
 function resolveFilename(filename) {
-  filename = vendor.sanitize(filename, { replacement: '_' });
+  filename = sanitize(filename, { replacement: '_' });
   return (filename == "") ? "screenshot" : filename;
 }
 

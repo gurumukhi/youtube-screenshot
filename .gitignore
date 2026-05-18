@@ -1,4 +1,4 @@
-src/vendor.dist.js
+src/*.dist.js
 .DS_Store
 node_modules
 build
