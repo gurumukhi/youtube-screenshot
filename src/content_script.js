@@ -295,6 +295,9 @@ async function loadConfiguration() {
     if (result.imageFormat === "png") {
       currentConfiguration.imageFormat = "image/png";
       currentConfiguration.imageFormatExtension = "png";
+    } else if (result.imageFormat === "webp") {
+      currentConfiguration.imageFormat = "image/webp";
+      currentConfiguration.imageFormatExtension = "webp";
     } else {
       currentConfiguration.imageFormat = "image/jpeg";
       currentConfiguration.imageFormatExtension = "jpeg";

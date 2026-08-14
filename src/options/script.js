@@ -29,7 +29,7 @@ const options = {
   imageFormat: {
     root: document.querySelector("fieldset#format"),
     type: "value",
-    default: "png",
+    default: "jpeg",
   },
   shortcutEnabled: {
     root: document.querySelector("fieldset#shortcut"),
