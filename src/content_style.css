@@ -1,0 +1,4 @@
+/* YouTube's hover highlight is a fixed 48px pill made for icon buttons: stretch it over the whole text button */
+button.ytp-screenshot.ytp-button::before {
+  width: 100% !important;
+}
