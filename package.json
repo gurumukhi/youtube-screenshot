@@ -17,9 +17,9 @@
     "start": "node scripts/start.mjs"
   },
   "dependencies": {
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.28.2",
     "sanitize-filename": "^1.6.3",
-    "web-ext": "^8.9.0"
+    "web-ext": "^10.8.0"
   },
   "webExt": {
     "sourceDir": "src",
