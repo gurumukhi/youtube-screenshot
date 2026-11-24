@@ -18,6 +18,8 @@ let currentConfiguration = {
   imageFormatExtension: "jpeg",
 
   shortcutEnabled: true,
+  shortcutKey: "Shift",
+  blockKey: "p",
   saveAsEnabled: false,
 };
 
@@ -29,6 +31,8 @@ async function captureScreenshot() {
   // Sometimes (e.g. Youtube Shorts), the first is not the one playing the current stream
   // Add "src" attribute filter however seems to do the trick
   let video = document.querySelector("video[src]");
+  if (!video)
+    return;
 
   if (video.mediaKeys != null) {
     browser.runtime.sendMessage({cmd: "showProtectionError"});
@@ -97,11 +101,8 @@ async function copyToClipboard(blob, format) {
 }
 
 function getTitle() {
-  let title = window.document.title;
-
-  // Remove suffix
-  const suffix = " - YouTube";
-  return title.endsWith(suffix) ? title.slice(0, -suffix.length) : title;
+  // Tab title is "(16) Video name - YouTube": drop only the notification count
+  return window.document.title.replace(/^\(\d+\+?\)\s+/, "");
 }
 
 function getFileName(video) {
@@ -127,7 +128,7 @@ function getFileName(video) {
     timeString += `0-`+`${mins}-${s}`;
   }
 
-  return `${getTitle()} - ${timeString}.${currentConfiguration.imageFormatExtension}`;
+  return `${getTitle()} - ${timeString} screenshot.${currentConfiguration.imageFormatExtension}`;
 }
 
 function setShortsButtonStyle(btn) {
@@ -190,6 +191,8 @@ function addButtonOnPlayer(container, regularNotShorts) {
   if (regularNotShorts) {
     btn.classList.add("ytp-time-display", "ytp-button");
     btn.style.width = "auto";
+    // Keep the text off the rounded left edge of YouTube's controls pill
+    btn.style.padding = "0 12px";
 
     const t = document.createTextNode("Screenshot");
     btn.appendChild(t);
@@ -272,6 +275,8 @@ async function loadConfiguration() {
 
   // Shortcut
   currentConfiguration.shortcutEnabled = result.shortcutEnabled ?? true;
+  currentConfiguration.shortcutKey = result.shortcutKey ?? "Shift";
+  currentConfiguration.blockKey = result.blockKey ?? "p";
   logger(`${currentConfiguration.shortcutEnabled ? "Enabling" : "Disabling"} screenshot shortcut`);
 
   // Save as
@@ -327,21 +332,41 @@ browser.runtime.onMessage.addListener(request => {
 
   if (request.cmd === "reloadConfiguration") {
     loadConfiguration();
-  } else if (request.cmd === "takeScreenshot") {
-    logger("Received takeScreenshot command from background");
-
-    if (!currentConfiguration.shortcutEnabled) {
-      logger("Shortcut is disabled");
-      return;
-    }
-
-    // Simply search for the screenshot button and simulate click
-    const btn = document.querySelector("button.ytp-screenshot")
-      || document.querySelector("button.ytd-screenshot");
-
-    if (btn) {
-      btn.click();
-      return;
-    }
   }
 });
+
+// Shortcut: one key alone, chosen in the options (Shift by default, left or right)
+const modifierProperties = { Shift: "shiftKey", Control: "ctrlKey", Alt: "altKey", Meta: "metaKey" };
+
+function isKey(e, key) {
+  return key !== "" && e.key.toLowerCase() === key.toLowerCase();
+}
+
+function handleShortcutKey(e) {
+  const isShortcut = isKey(e, currentConfiguration.shortcutKey) && currentConfiguration.shortcutEnabled;
+  const isBlocked = isKey(e, currentConfiguration.blockKey);
+  if (!isShortcut && !isBlocked)
+    return;
+
+  // The key alone: no modifier held, other than the key itself
+  for (const [key, property] of Object.entries(modifierProperties)) {
+    if (e[property] && e.key !== key)
+      return;
+  }
+
+  // Don't fire while typing in the search box or a comment
+  const target = e.target;
+  if (target.isContentEditable || ["INPUT", "SELECT", "TEXTAREA"].includes(target.tagName))
+    return;
+
+  // Capture phase on window + stop: YouTube's own key handlers never see the shortcut key
+  // (they would show the player controls), and we capture directly instead of simulating
+  // a click inside the player controls
+  e.stopImmediatePropagation();
+
+  if (isShortcut && e.type === "keydown" && !e.repeat)
+    captureScreenshot();
+}
+
+for (const type of ["keydown", "keypress", "keyup"])
+  window.addEventListener(type, handleShortcutKey, true);
